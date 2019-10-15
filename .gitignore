@@ -3,3 +3,14 @@
 ################################################################################
 
 *.db
+*.opendb
+*.sqlite
+*.idb
+*.pdb
+*.obj
+*.exe
+*.ilk
+*.cso
+*.tlog
+*.suo
+/.vs/ProjectSettings.json
