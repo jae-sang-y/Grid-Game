@@ -1,5 +1,6 @@
 ﻿  main.cpp
-C:\Users\Korean\source\repos\apple01644\Grid-Game\BzTuts\main.cpp(917,19): warning C4244:  '=': conversion from 'int' to 'FLOAT', possible loss of data
-C:\Users\Korean\source\repos\apple01644\Grid-Game\BzTuts\main.cpp(918,20): warning C4244:  '=': conversion from 'int' to 'FLOAT', possible loss of data
-C:\Users\Korean\source\repos\apple01644\Grid-Game\BzTuts\main.cpp(1316): warning C4715:  'GetDXGIFormatBitsPerPixel': not all control paths return a value
+  Renderer.cpp
+C:\Users\Korean\source\repos\apple01644\Grid-Game\BzTuts\Renderer.cpp(707,19): warning C4244:  '=': conversion from 'int' to 'FLOAT', possible loss of data
+  Generating Code...
+C:\Users\Korean\source\repos\apple01644\Grid-Game\BzTuts\Renderer.cpp(708,20): warning C4244:  '=': conversion from 'int' to 'FLOAT', possible loss of data
   BzTuts.vcxproj -> C:\Users\Korean\source\repos\apple01644\Grid-Game\x64\Debug\BzTuts.exe
