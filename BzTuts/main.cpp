@@ -1,32 +1,32 @@
 #include "stdafx.h"
 
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	mainApp = new Renderer();
 
-	if (!mainApp->InitializeWindow(hInstance, nShowCmd, FALSE))
+	try
 	{
-		MessageBox(0, L"Window Initialization - Failed",
-			L"Error", MB_OK);
-		return 1;
-	}
+		mainApp->InitializeWindow(hInstance, nShowCmd, FALSE);
 
-	if (!mainApp->InitD3D())
+		mainApp->InitD3D();
+
+		mainApp->mainloop();
+
+		mainApp->WaitForPreviousFrame();
+
+		CloseHandle(mainApp->m_fenceEvent);
+	}
+	catch (DxException dx)
 	{
-		MessageBox(0, L"Failed to initialize direct3d 12",
-			L"Error", MB_OK);
-		mainApp->Cleanup();
-		return 1;
+		_com_error err(dx.ErrorCode);
+		MessageBoxW(
+			mainApp->hwnd,
+			(dx.Filename + L"(line : " + std::to_wstring(dx.LineNumber) + L")\n" + dx.FunctionName + L"\n" + err.ErrorMessage()).c_str(),
+			L"Exception",
+			MB_OK | MB_ICONERROR
+		);
+		return -1;
 	}
-
-	mainApp->mainloop();
-
-	mainApp->WaitForPreviousFrame();
-
-	CloseHandle(mainApp->fenceEvent);
-
-	mainApp->Cleanup();
 
 	return 0;
 }

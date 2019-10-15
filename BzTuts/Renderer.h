@@ -9,10 +9,42 @@
 #include "d3dx12.h"
 #include "Image Loader.h"
 
+#include <unordered_map>
+#include <string>
+
 #define SAFE_RELEASE(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
 
-using namespace DirectX;
+class DxException
+{
+public:
+	DxException() = default;
+	DxException(HRESULT hr, const std::wstring& functionName, const std::wstring& filename, int lineNumber)
+		: ErrorCode(hr), FunctionName(functionName), Filename(filename), LineNumber(lineNumber) {
+	}
 
+	HRESULT ErrorCode = S_OK;
+	std::wstring FunctionName;
+	std::wstring Filename;
+	int LineNumber = -1;
+};
+
+inline std::wstring AnsiToWString(const std::string& str)
+{
+	WCHAR buffer[512];
+	MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, buffer, 512);
+	return std::wstring(buffer);
+}
+
+#ifndef ThrowIfFailed
+#define ThrowIfFailed(x)                                              \
+{                                                                     \
+    HRESULT hr__ = (x);                                               \
+    std::wstring wfn = AnsiToWString(__FILE__);                       \
+    if(FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); } \
+}
+#endif
+
+using namespace DirectX;
 
 struct Vertex {
 	Vertex(float x, float y, float z, float u, float v) : pos(x, y, z), texCoord(u, v) {}
@@ -27,10 +59,7 @@ struct ConstantBufferPerObject {
 constexpr int ConstantBufferPerObjectAlignedSize = (sizeof(ConstantBufferPerObject) + 255) & ~255;
 
 class Renderer {
-
 	constexpr static int frameBufferCount = 3;
-
-	HWND hwnd = NULL;
 
 	LPCTSTR WindowName = L"BzTutsApp";
 
@@ -42,25 +71,24 @@ class Renderer {
 	bool FullScreen = false;
 
 	bool Running = true;
-	
 
-	ID3D12Device* device;
+	ID3D12Device* m_device;
 
-	IDXGISwapChain3* swapChain;
+	IDXGISwapChain3* m_swapChain;
 
-	ID3D12CommandQueue* commandQueue;
+	ID3D12CommandQueue* m_commandQueue;
 
-	ID3D12DescriptorHeap* rtvDescriptorHeap;
+	ID3D12DescriptorHeap* m_rtvDescriptorHeap;
 
-	ID3D12Resource* renderTargets[frameBufferCount];
+	ID3D12Resource* m_renderTargets[frameBufferCount];
 
-	ID3D12CommandAllocator* commandAllocator[frameBufferCount];
+	ID3D12CommandAllocator* m_commandAllocator[frameBufferCount];
 
-	ID3D12GraphicsCommandList* commandList;
+	ID3D12GraphicsCommandList* m_commandList;
 
-	ID3D12Fence* fence[frameBufferCount];
-	
-	UINT64 fenceValue[frameBufferCount];
+	ID3D12Fence* m_fence[frameBufferCount];
+
+	UINT64 m_fenceValue[frameBufferCount];
 
 	int frameIndex;
 
@@ -112,10 +140,14 @@ class Renderer {
 
 	ID3D12DescriptorHeap* mainDescriptorHeap;
 	ID3D12Resource* textureBufferUploadHeap;
+
+	std::unordered_map<std::wstring, D3D12_SHADER_BYTECODE> m_shader;
+	std::unordered_map < std::wstring, std::vector<D3D12_INPUT_ELEMENT_DESC> > m_inputlayout;
+
 public:
 	LRESULT WndCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	bool InitD3D();
+	void InitD3D();
 
 	void Update();
 
@@ -127,11 +159,22 @@ public:
 
 	void WaitForPreviousFrame();
 
-	bool InitializeWindow(HINSTANCE hInstance, int ShowWnd, bool fullscreen);
+	void InitializeWindow(HINSTANCE hInstance, int ShowWnd, bool fullscreen);
 
 	void mainloop();
 
-	HANDLE fenceEvent;
+	void CreateDxgiFactory(IDXGIFactory4** ptr);
+	void InitDevice(IDXGIFactory4* dxgiFactory);
+	void CreateCommandQueue();
+	void CreateSwapChain(IDXGIFactory4* dxgiFactory);
+	void CreateCommandObject();
+	void CreateRootSignature();
+	void BuildShader();
+	void BuildPSO();
+	void BuildInputlayout();
+
+	HWND hwnd = NULL;
+	HANDLE m_fenceEvent;
 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

@@ -1,7 +1,6 @@
 #include "Renderer.h"
 
-
-bool Renderer::InitializeWindow(HINSTANCE hInstance, int ShowWnd, bool fullscreen)
+void Renderer::InitializeWindow(HINSTANCE hInstance, int ShowWnd, bool fullscreen)
 {
 	if (fullscreen)
 	{
@@ -30,11 +29,7 @@ bool Renderer::InitializeWindow(HINSTANCE hInstance, int ShowWnd, bool fullscree
 	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
 	if (!RegisterClassEx(&wc))
-	{
-		MessageBox(NULL, L"Error registering class",
-			L"Error", MB_OK | MB_ICONERROR);
-		return false;
-	}
+		throw DxException(NULL, L"Renderer::InitializeWindow", L"Error registering class", __LINE__);
 
 	hwnd = CreateWindowEx(NULL,
 		WindowName,
@@ -48,21 +43,13 @@ bool Renderer::InitializeWindow(HINSTANCE hInstance, int ShowWnd, bool fullscree
 		NULL);
 
 	if (!hwnd)
-	{
-		MessageBox(NULL, L"Error creating window",
-			L"Error", MB_OK | MB_ICONERROR);
-		return false;
-	}
+		throw DxException(NULL, L"Renderer::InitializeWindow", L"Error Creating Windows", __LINE__);
 
 	if (fullscreen)
-	{
 		SetWindowLong(hwnd, GWL_STYLE, 0);
-	}
 
 	ShowWindow(hwnd, ShowWnd);
 	UpdateWindow(hwnd);
-
-	return true;
 }
 
 void Renderer::mainloop() {
@@ -106,25 +93,16 @@ LRESULT Renderer::WndCallback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	}
-	return DefWindowProc(hwnd,
-		msg,
-		wParam,
-		lParam);
+	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
-BYTE* imageData;
-
-bool Renderer::InitD3D()
+void Renderer::CreateDxgiFactory(IDXGIFactory4** ptr)
 {
-	HRESULT hr;
+	ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(ptr)));
+}
 
-	IDXGIFactory4* dxgiFactory;
-	hr = CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory));
-	if (FAILED(hr))
-	{
-		return false;
-	}
-
+void Renderer::InitDevice(IDXGIFactory4* dxgiFactory)
+{
 	IDXGIAdapter1* adapter;
 
 	int adapterIndex = 0;
@@ -136,13 +114,9 @@ bool Renderer::InitD3D()
 		DXGI_ADAPTER_DESC1 desc;
 		adapter->GetDesc1(&desc);
 
-		if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-		{
-			continue;
-		}
+		if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue;
 
-		hr = D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr);
-		if (SUCCEEDED(hr))
+		if (SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
 		{
 			adapterFound = true;
 			break;
@@ -151,34 +125,22 @@ bool Renderer::InitD3D()
 		adapterIndex++;
 	}
 
-	if (!adapterFound)
-	{
-		Running = false;
-		return false;
-	}
+	if (!adapterFound) throw;
 
-	hr = D3D12CreateDevice(
-		adapter,
-		D3D_FEATURE_LEVEL_11_0,
-		IID_PPV_ARGS(&device)
-	);
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+	ThrowIfFailed(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_device)));
+}
 
+void Renderer::CreateCommandQueue()
+{
 	D3D12_COMMAND_QUEUE_DESC cqDesc = {};
 	cqDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	cqDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-	hr = device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(&commandQueue));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+	ThrowIfFailed(m_device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(&m_commandQueue)));
+}
 
+void Renderer::CreateSwapChain(IDXGIFactory4* dxgiFactory)
+{
 	DXGI_MODE_DESC backBufferDesc = {};
 	backBufferDesc.Width = Width;
 	backBufferDesc.Height = Height;
@@ -187,92 +149,69 @@ bool Renderer::InitD3D()
 	DXGI_SAMPLE_DESC sampleDesc = {};
 	sampleDesc.Count = 1;
 
-	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-	swapChainDesc.BufferCount = frameBufferCount;
-	swapChainDesc.BufferDesc = backBufferDesc;
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.OutputWindow = hwnd;
-	swapChainDesc.SampleDesc = sampleDesc;
-	swapChainDesc.Windowed = !FullScreen;
+	DXGI_SWAP_CHAIN_DESC m_swapChainDesc = {};
+	m_swapChainDesc.BufferCount = frameBufferCount;
+	m_swapChainDesc.BufferDesc = backBufferDesc;
+	m_swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	m_swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	m_swapChainDesc.OutputWindow = hwnd;
+	m_swapChainDesc.SampleDesc = sampleDesc;
+	m_swapChainDesc.Windowed = !FullScreen;
 
 	IDXGISwapChain* tempSwapChain;
 
 	dxgiFactory->CreateSwapChain(
-		commandQueue,
-		&swapChainDesc,
+		m_commandQueue,
+		&m_swapChainDesc,
 		&tempSwapChain
 	);
 
-	swapChain = static_cast<IDXGISwapChain3*>(tempSwapChain);
+	m_swapChain = static_cast<IDXGISwapChain3*>(tempSwapChain);
+}
 
-	frameIndex = swapChain->GetCurrentBackBufferIndex();
+void Renderer::CreateCommandObject() {
+	frameIndex = m_swapChain->GetCurrentBackBufferIndex();
 
 	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
 	rtvHeapDesc.NumDescriptors = frameBufferCount;
 	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 
 	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	hr = device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+	ThrowIfFailed(m_device->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_rtvDescriptorHeap)));
 
-	rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	rtvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 	for (int i = 0; i < frameBufferCount; i++)
 	{
-		hr = swapChain->GetBuffer(i, IID_PPV_ARGS(&renderTargets[i]));
-		if (FAILED(hr))
-		{
-			Running = false;
-			return false;
-		}
+		ThrowIfFailed(m_swapChain->GetBuffer(i, IID_PPV_ARGS(&m_renderTargets[i])));
 
-		device->CreateRenderTargetView(renderTargets[i], nullptr, rtvHandle);
+		m_device->CreateRenderTargetView(m_renderTargets[i], nullptr, rtvHandle);
 
 		rtvHandle.Offset(1, rtvDescriptorSize);
 	}
 
 	for (int i = 0; i < frameBufferCount; i++)
 	{
-		hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator[i]));
-		if (FAILED(hr))
-		{
-			Running = false;
-			return false;
-		}
+		ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator[i])));
 	}
 
-	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator[frameIndex], NULL, IID_PPV_ARGS(&commandList));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+	ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocator[frameIndex], NULL, IID_PPV_ARGS(&m_commandList)));
 
 	for (int i = 0; i < frameBufferCount; i++)
 	{
-		hr = device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence[i]));
-		if (FAILED(hr))
-		{
-			Running = false;
-			return false;
-		}
-		fenceValue[i] = 0;
+		ThrowIfFailed(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence[i])));
+
+		m_fenceValue[i] = 0;
 	}
 
-	fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-	if (fenceEvent == nullptr)
-	{
-		Running = false;
-		return false;
-	}
+	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	if (m_fenceEvent == nullptr) throw;
+}
 
+void Renderer::CreateRootSignature()
+{
 	D3D12_ROOT_DESCRIPTOR rootCBVDescriptor;
 	rootCBVDescriptor.RegisterSpace = 0;
 	rootCBVDescriptor.ShaderRegister = 0;
@@ -324,77 +263,54 @@ bool Renderer::InitD3D()
 
 	ID3DBlob* errorBuff;
 	ID3DBlob* signature;
-	hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &errorBuff);
+	HRESULT hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &errorBuff);
 	if (FAILED(hr))
 	{
 		OutputDebugStringA((char*)errorBuff->GetBufferPointer());
-		return false;
+		ThrowIfFailed(hr);
 	}
 
-	hr = device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-	if (FAILED(hr))
-	{
-		return false;
-	}
+	ThrowIfFailed(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
+}
 
-	ID3DBlob* vertexShader;
-	hr = D3DCompileFromFile(L"VertexShader.hlsl",
-		nullptr,
-		nullptr,
-		"main",
-		"vs_5_0",
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-		0,
-		&vertexShader,
-		&errorBuff);
-	if (FAILED(hr))
-	{
-		OutputDebugStringA((char*)errorBuff->GetBufferPointer());
-		Running = false;
-		return false;
-	}
+void Renderer::BuildShader()
+{
+	ID3DBlob* vertexShader, * pixelShader, * errorBuff;
+	D3D12_SHADER_BYTECODE vertexShaderBytecode, pixelShaderBytecode;
 
-	D3D12_SHADER_BYTECODE vertexShaderBytecode = {};
+	ThrowIfFailed(D3DCompileFromFile(L"VertexShader.hlsl", nullptr, nullptr, "main", "vs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &vertexShader, &errorBuff));
+
+	vertexShaderBytecode = {};
 	vertexShaderBytecode.BytecodeLength = vertexShader->GetBufferSize();
 	vertexShaderBytecode.pShaderBytecode = vertexShader->GetBufferPointer();
 
-	ID3DBlob* pixelShader;
-	hr = D3DCompileFromFile(L"PixelShader.hlsl",
-		nullptr,
-		nullptr,
-		"main",
-		"ps_5_0",
-		D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-		0,
-		&pixelShader,
-		&errorBuff);
-	if (FAILED(hr))
-	{
-		OutputDebugStringA((char*)errorBuff->GetBufferPointer());
-		Running = false;
-		return false;
-	}
+	m_shader[L"VS Default"] = vertexShaderBytecode;
 
-	D3D12_SHADER_BYTECODE pixelShaderBytecode = {};
+	ThrowIfFailed(D3DCompileFromFile(L"PixelShader.hlsl", nullptr, nullptr, "main", "ps_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &pixelShader, &errorBuff));
+
+	pixelShaderBytecode = {};
 	pixelShaderBytecode.BytecodeLength = pixelShader->GetBufferSize();
 	pixelShaderBytecode.pShaderBytecode = pixelShader->GetBufferPointer();
 
-	D3D12_INPUT_ELEMENT_DESC inputLayout[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-	};
+	m_shader[L"PS Default"] = pixelShaderBytecode;
+}
 
+void Renderer::BuildPSO()
+{
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc = {};
 
-	inputLayoutDesc.NumElements = sizeof(inputLayout) / sizeof(D3D12_INPUT_ELEMENT_DESC);
-	inputLayoutDesc.pInputElementDescs = inputLayout;
+	auto& o = m_inputlayout[L"default"];
+	inputLayoutDesc.NumElements = o.size();
+	inputLayoutDesc.pInputElementDescs = o.data();
+
+	DXGI_SAMPLE_DESC sampleDesc = {};
+	sampleDesc.Count = 1;
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
 	psoDesc.InputLayout = inputLayoutDesc;
 	psoDesc.pRootSignature = rootSignature;
-	psoDesc.VS = vertexShaderBytecode;
-	psoDesc.PS = pixelShaderBytecode;
+	psoDesc.VS = m_shader[L"VS Default"];
+	psoDesc.PS = m_shader[L"PS Default"];
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	psoDesc.SampleDesc = sampleDesc;
@@ -404,12 +320,37 @@ bool Renderer::InitD3D()
 	psoDesc.NumRenderTargets = 1;
 	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 
-	hr = device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineStateObject));
-	if (FAILED(hr))
+	ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineStateObject)));
+}
+
+void Renderer::BuildInputlayout()
+{
+	m_inputlayout[L"default"] =
 	{
-		Running = false;
-		return false;
-	}
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+}
+
+void Renderer::InitD3D()
+{
+	IDXGIFactory4* dxgiFactory = nullptr;
+	CreateDxgiFactory(&dxgiFactory);
+
+	InitDevice(dxgiFactory);
+	CreateCommandQueue();
+
+	CreateSwapChain(dxgiFactory);
+
+	CreateCommandObject();
+
+	CreateRootSignature();
+
+	BuildShader();
+
+	BuildInputlayout();
+
+	BuildPSO();
 
 	Vertex vList[] = {
 		{ -0.5f,  0.5f, -0.5f, 0.0f, 0.0f },
@@ -445,35 +386,13 @@ bool Renderer::InitD3D()
 
 	int vBufferSize = sizeof(vList);
 
-	hr = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(vBufferSize),
-		D3D12_RESOURCE_STATE_COPY_DEST,
-
-		nullptr,
-		IID_PPV_ARGS(&vertexBuffer));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+	ThrowIfFailed(m_device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(vBufferSize), D3D12_RESOURCE_STATE_COPY_DEST, nullptr, IID_PPV_ARGS(&vertexBuffer)));
 
 	vertexBuffer->SetName(L"Vertex Buffer Resource Heap");
 
 	ID3D12Resource* vBufferUploadHeap;
-	hr = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(vBufferSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vBufferUploadHeap));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+	ThrowIfFailed(m_device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD), D3D12_HEAP_FLAG_NONE, &CD3DX12_RESOURCE_DESC::Buffer(vBufferSize), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vBufferUploadHeap)));
+
 	vBufferUploadHeap->SetName(L"Vertex Buffer Upload Resource Heap");
 
 	D3D12_SUBRESOURCE_DATA vertexData = {};
@@ -481,9 +400,9 @@ bool Renderer::InitD3D()
 	vertexData.RowPitch = vBufferSize;
 	vertexData.SlicePitch = vBufferSize;
 
-	UpdateSubresources(commandList, vertexBuffer, vBufferUploadHeap, 0, 0, 1, &vertexData);
+	UpdateSubresources(m_commandList, vertexBuffer, vBufferUploadHeap, 0, 0, 1, &vertexData);
 
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(vertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
+	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(vertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
 
 	DWORD iList[] = {
 		0, 1, 2,
@@ -509,34 +428,25 @@ bool Renderer::InitD3D()
 
 	numCubeIndices = sizeof(iList) / sizeof(DWORD);
 
-	hr = device->CreateCommittedResource(
+	ThrowIfFailed(m_device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer(iBufferSize),
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
-		IID_PPV_ARGS(&indexBuffer));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+		IID_PPV_ARGS(&indexBuffer)));
 
 	vertexBuffer->SetName(L"Index Buffer Resource Heap");
 
 	ID3D12Resource* iBufferUploadHeap;
-	hr = device->CreateCommittedResource(
+	ThrowIfFailed(m_device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer(vBufferSize),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&iBufferUploadHeap));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+		IID_PPV_ARGS(&iBufferUploadHeap)));
+
 	vBufferUploadHeap->SetName(L"Index Buffer Upload Resource Heap");
 
 	D3D12_SUBRESOURCE_DATA indexData = {};
@@ -544,20 +454,15 @@ bool Renderer::InitD3D()
 	indexData.RowPitch = iBufferSize;
 	indexData.SlicePitch = iBufferSize;
 
-	UpdateSubresources(commandList, indexBuffer, iBufferUploadHeap, 0, 0, 1, &indexData);
+	UpdateSubresources(m_commandList, indexBuffer, iBufferUploadHeap, 0, 0, 1, &indexData);
 
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(indexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
+	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(indexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
 
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
 	dsvHeapDesc.NumDescriptors = 1;
 	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	hr = device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsDescriptorHeap));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+	ThrowIfFailed(m_device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsDescriptorHeap)));
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilDesc = {};
 	depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
@@ -569,44 +474,36 @@ bool Renderer::InitD3D()
 	depthOptimizedClearValue.DepthStencil.Depth = 1.0f;
 	depthOptimizedClearValue.DepthStencil.Stencil = 0;
 
-	hr = device->CreateCommittedResource(
+	ThrowIfFailed(m_device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, Width, Height, 1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL),
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
 		&depthOptimizedClearValue,
 		IID_PPV_ARGS(&depthStencilBuffer)
-	);
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+	));
+
 	dsDescriptorHeap->SetName(L"Depth/Stencil Resource Heap");
 
-	device->CreateDepthStencilView(depthStencilBuffer, &depthStencilDesc, dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+	m_device->CreateDepthStencilView(depthStencilBuffer, &depthStencilDesc, dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 	for (int i = 0; i < frameBufferCount; ++i)
 	{
-		hr = device->CreateCommittedResource(
+		ThrowIfFailed(m_device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 			D3D12_HEAP_FLAG_NONE,
 			&CD3DX12_RESOURCE_DESC::Buffer(1024 * 64),
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
-			IID_PPV_ARGS(&constantBufferUploadHeaps[i]));
-		if (FAILED(hr))
-		{
-			Running = false;
-			return false;
-		}
+			IID_PPV_ARGS(&constantBufferUploadHeaps[i])));
+
 		constantBufferUploadHeaps[i]->SetName(L"Constant Buffer Upload Resource Heap");
 
 		ZeroMemory(&cbPerObject, sizeof(cbPerObject));
 
 		CD3DX12_RANGE readRange(0, 0);
 
-		hr = constantBufferUploadHeaps[i]->Map(0, &readRange, reinterpret_cast<void**>(&cbvGPUAddress[i]));
+		ThrowIfFailed(constantBufferUploadHeaps[i]->Map(0, &readRange, reinterpret_cast<void**>(&cbvGPUAddress[i])));
 
 		memcpy(cbvGPUAddress[i], &cbPerObject, sizeof(cbPerObject));
 		memcpy(cbvGPUAddress[i] + ConstantBufferPerObjectAlignedSize, &cbPerObject, sizeof(cbPerObject));
@@ -616,12 +513,9 @@ bool Renderer::InitD3D()
 	heapDesc.NumDescriptors = 1;
 	heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	hr = device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&mainDescriptorHeap));
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	ThrowIfFailed(m_device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&mainDescriptorHeap)));
 
+	BYTE* imageData = nullptr;
 	D3D12_RESOURCE_DESC textureDesc;
 	int imageBytesPerRow;
 	int imageSize = LoadImageDataFromFile(&imageData, textureDesc, L"braynzar.jpg", imageBytesPerRow);
@@ -629,39 +523,31 @@ bool Renderer::InitD3D()
 	if (imageSize <= 0)
 	{
 		Running = false;
-		return false;
+		throw DxException(NULL, L"None", L"Can't import image", __LINE__);
 	}
 
-	hr = device->CreateCommittedResource(
+	ThrowIfFailed(m_device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
 		&textureDesc,
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
-		IID_PPV_ARGS(&textureBuffer));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+		IID_PPV_ARGS(&textureBuffer)));
+
 	textureBuffer->SetName(L"Texture Buffer Resource Heap");
 
 	UINT64 textureUploadBufferSize;
 
-	device->GetCopyableFootprints(&textureDesc, 0, 1, 0, nullptr, nullptr, nullptr, &textureUploadBufferSize);
+	m_device->GetCopyableFootprints(&textureDesc, 0, 1, 0, nullptr, nullptr, nullptr, &textureUploadBufferSize);
 
-	hr = device->CreateCommittedResource(
+	ThrowIfFailed(m_device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer(textureUploadBufferSize),
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&textureBufferUploadHeap));
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+		IID_PPV_ARGS(&textureBufferUploadHeap)));
+
 	textureBufferUploadHeap->SetName(L"Texture Buffer Upload Resource Heap");
 
 	D3D12_SUBRESOURCE_DATA textureData = {};
@@ -669,28 +555,23 @@ bool Renderer::InitD3D()
 	textureData.RowPitch = imageBytesPerRow;
 	textureData.SlicePitch = imageBytesPerRow * textureDesc.Height;
 
-	UpdateSubresources(commandList, textureBuffer, textureBufferUploadHeap, 0, 0, 1, &textureData);
+	UpdateSubresources(m_commandList, textureBuffer, textureBufferUploadHeap, 0, 0, 1, &textureData);
 
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(textureBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(textureBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Format = textureDesc.Format;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
-	device->CreateShaderResourceView(textureBuffer, &srvDesc, mainDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+	m_device->CreateShaderResourceView(textureBuffer, &srvDesc, mainDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
-	commandList->Close();
-	ID3D12CommandList* ppCommandLists[] = { commandList };
-	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+	m_commandList->Close();
+	ID3D12CommandList* ppCommandLists[] = { m_commandList };
+	m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-	fenceValue[frameIndex]++;
-	hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
-	if (FAILED(hr))
-	{
-		Running = false;
-		return false;
-	}
+	m_fenceValue[frameIndex]++;
+	ThrowIfFailed(m_commandQueue->Signal(m_fence[frameIndex], m_fenceValue[frameIndex]));
 
 	delete imageData;
 
@@ -740,8 +621,6 @@ bool Renderer::InitD3D()
 	tmpMat = XMMatrixTranslationFromVector(posVec);
 	XMStoreFloat4x4(&cube2RotMat, XMMatrixIdentity());
 	XMStoreFloat4x4(&cube2WorldMat, tmpMat);
-
-	return true;
 }
 
 void Renderer::Update()
@@ -791,86 +670,62 @@ void Renderer::Update()
 
 void Renderer::UpdatePipeline()
 {
-	HRESULT hr;
-
 	WaitForPreviousFrame();
 
-	hr = commandAllocator[frameIndex]->Reset();
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	ThrowIfFailed(m_commandAllocator[frameIndex]->Reset());
 
-	hr = commandList->Reset(commandAllocator[frameIndex], pipelineStateObject);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	ThrowIfFailed(m_commandList->Reset(m_commandAllocator[frameIndex], pipelineStateObject));
 
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, rtvDescriptorSize);
+	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), frameIndex, rtvDescriptorSize);
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
-	commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
+	m_commandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
 
 	const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	m_commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
-	commandList->ClearDepthStencilView(dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	m_commandList->ClearDepthStencilView(dsDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	commandList->SetGraphicsRootSignature(rootSignature);
+	m_commandList->SetGraphicsRootSignature(rootSignature);
 
 	ID3D12DescriptorHeap* descriptorHeaps[] = { mainDescriptorHeap };
-	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+	m_commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
-	commandList->SetGraphicsRootDescriptorTable(1, mainDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+	m_commandList->SetGraphicsRootDescriptorTable(1, mainDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
-	commandList->RSSetViewports(1, &viewport);
-	commandList->RSSetScissorRects(1, &scissorRect);
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
-	commandList->IASetIndexBuffer(&indexBufferView);
+	m_commandList->RSSetViewports(1, &viewport);
+	m_commandList->RSSetScissorRects(1, &scissorRect);
+	m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
+	m_commandList->IASetIndexBuffer(&indexBufferView);
 
-	commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress());
+	m_commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress());
 
-	commandList->DrawIndexedInstanced(numCubeIndices, 1, 0, 0, 0);
+	m_commandList->DrawIndexedInstanced(numCubeIndices, 1, 0, 0, 0);
 
-	commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() + ConstantBufferPerObjectAlignedSize);
+	m_commandList->SetGraphicsRootConstantBufferView(0, constantBufferUploadHeaps[frameIndex]->GetGPUVirtualAddress() + ConstantBufferPerObjectAlignedSize);
 
-	commandList->DrawIndexedInstanced(numCubeIndices, 1, 0, 0, 0);
+	m_commandList->DrawIndexedInstanced(numCubeIndices, 1, 0, 0, 0);
 
-	commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(renderTargets[frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
-	hr = commandList->Close();
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	ThrowIfFailed(m_commandList->Close());
 }
 
 void Renderer::Render()
 {
-	HRESULT hr;
-
 	UpdatePipeline();
 
-	ID3D12CommandList* ppCommandLists[] = { commandList };
+	ID3D12CommandList* ppCommandLists[] = { m_commandList };
 
-	commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+	m_commandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-	hr = commandQueue->Signal(fence[frameIndex], fenceValue[frameIndex]);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	ThrowIfFailed(m_commandQueue->Signal(m_fence[frameIndex], m_fenceValue[frameIndex]));
 
-	hr = swapChain->Present(0, 0);
-	if (FAILED(hr))
-	{
-		Running = false;
-	}
+	ThrowIfFailed(m_swapChain->Present(0, 0));
 }
 
 void Renderer::Cleanup()
@@ -882,20 +737,20 @@ void Renderer::Cleanup()
 	}
 
 	BOOL fs = false;
-	if (swapChain->GetFullscreenState(&fs, NULL))
-		swapChain->SetFullscreenState(false, NULL);
+	if (m_swapChain->GetFullscreenState(&fs, NULL))
+		m_swapChain->SetFullscreenState(false, NULL);
 
-	SAFE_RELEASE(device);
-	SAFE_RELEASE(swapChain);
-	SAFE_RELEASE(commandQueue);
-	SAFE_RELEASE(rtvDescriptorHeap);
-	SAFE_RELEASE(commandList);
+	SAFE_RELEASE(m_device);
+	SAFE_RELEASE(m_swapChain);
+	SAFE_RELEASE(m_commandQueue);
+	SAFE_RELEASE(m_rtvDescriptorHeap);
+	SAFE_RELEASE(m_commandList);
 
 	for (int i = 0; i < frameBufferCount; ++i)
 	{
-		SAFE_RELEASE(renderTargets[i]);
-		SAFE_RELEASE(commandAllocator[i]);
-		SAFE_RELEASE(fence[i]);
+		SAFE_RELEASE(m_renderTargets[i]);
+		SAFE_RELEASE(m_commandAllocator[i]);
+		SAFE_RELEASE(m_fence[i]);
 	};
 
 	SAFE_RELEASE(pipelineStateObject);
@@ -914,20 +769,14 @@ void Renderer::Cleanup()
 
 void Renderer::WaitForPreviousFrame()
 {
-	HRESULT hr;
+	frameIndex = m_swapChain->GetCurrentBackBufferIndex();
 
-	frameIndex = swapChain->GetCurrentBackBufferIndex();
-
-	if (fence[frameIndex]->GetCompletedValue() < fenceValue[frameIndex])
+	if (m_fence[frameIndex]->GetCompletedValue() < m_fenceValue[frameIndex])
 	{
-		hr = fence[frameIndex]->SetEventOnCompletion(fenceValue[frameIndex], fenceEvent);
-		if (FAILED(hr))
-		{
-			Running = false;
-		}
+		ThrowIfFailed(m_fence[frameIndex]->SetEventOnCompletion(m_fenceValue[frameIndex], m_fenceEvent));
 
-		WaitForSingleObject(fenceEvent, INFINITE);
+		WaitForSingleObject(m_fenceEvent, INFINITE);
 	}
 
-	fenceValue[frameIndex]++;
+	m_fenceValue[frameIndex]++;
 }
