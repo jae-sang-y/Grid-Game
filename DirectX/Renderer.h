@@ -142,7 +142,7 @@ class Renderer {
 	ID3D12Resource* textureBufferUploadHeap;
 
 	std::unordered_map<std::wstring, D3D12_SHADER_BYTECODE> m_shader;
-	std::unordered_map < std::wstring, std::vector<D3D12_INPUT_ELEMENT_DESC> > m_inputlayout;
+	std::unordered_map<std::wstring, std::vector<D3D12_INPUT_ELEMENT_DESC> > m_inputlayout;
 
 public:
 	LRESULT WndCallback(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -172,6 +172,7 @@ public:
 	void BuildShader();
 	void BuildPSO();
 	void BuildInputlayout();
+	void BuildResource();
 
 	HWND hwnd = NULL;
 	HANDLE m_fenceEvent;

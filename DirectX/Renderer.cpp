@@ -332,26 +332,8 @@ void Renderer::BuildInputlayout()
 	};
 }
 
-void Renderer::InitD3D()
+void Renderer::BuildResource()
 {
-	IDXGIFactory4* dxgiFactory = nullptr;
-	CreateDxgiFactory(&dxgiFactory);
-
-	InitDevice(dxgiFactory);
-	CreateCommandQueue();
-
-	CreateSwapChain(dxgiFactory);
-
-	CreateCommandObject();
-
-	CreateRootSignature();
-
-	BuildShader();
-
-	BuildInputlayout();
-
-	BuildPSO();
-
 	Vertex vList[] = {
 		{ -0.5f,  0.5f, -0.5f, 0.0f, 0.0f },
 		{  0.5f, -0.5f, -0.5f, 1.0f, 1.0f },
@@ -457,6 +439,37 @@ void Renderer::InitD3D()
 	UpdateSubresources(m_commandList, indexBuffer, iBufferUploadHeap, 0, 0, 1, &indexData);
 
 	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(indexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
+
+	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+	vertexBufferView.StrideInBytes = sizeof(Vertex);
+	vertexBufferView.SizeInBytes = vBufferSize;
+
+	indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
+	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+	indexBufferView.SizeInBytes = iBufferSize;
+}
+
+void Renderer::InitD3D()
+{
+	IDXGIFactory4* dxgiFactory = nullptr;
+	CreateDxgiFactory(&dxgiFactory);
+
+	InitDevice(dxgiFactory);
+	CreateCommandQueue();
+
+	CreateSwapChain(dxgiFactory);
+
+	CreateCommandObject();
+
+	CreateRootSignature();
+
+	BuildShader();
+
+	BuildInputlayout();
+
+	BuildPSO();
+
+	BuildResource();
 
 	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
 	dsvHeapDesc.NumDescriptors = 1;
@@ -574,14 +587,6 @@ void Renderer::InitD3D()
 	ThrowIfFailed(m_commandQueue->Signal(m_fence[frameIndex], m_fenceValue[frameIndex]));
 
 	delete imageData;
-
-	vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vertexBufferView.StrideInBytes = sizeof(Vertex);
-	vertexBufferView.SizeInBytes = vBufferSize;
-
-	indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
-	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-	indexBufferView.SizeInBytes = iBufferSize;
 
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;

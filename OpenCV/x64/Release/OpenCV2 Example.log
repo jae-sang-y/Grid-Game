@@ -1,0 +1,308 @@
+﻿  main.cpp
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(108,20): warning C4091:  'extern ': ignored on left of 'Block' when no variable is declared
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(153,13): warning C4099:  'Block': type name first seen using 'struct' now seen using 'class'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(153): message :  see declaration of 'Block'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,69): warning C4244:  'argument': conversion from 'int' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,69): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,69): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,69): warning C4244:             _Tp=float
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,69): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,58): warning C4244:  'argument': conversion from 'int' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,58): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,58): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,58): warning C4244:             _Tp=float
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,58): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,33): warning C4244:  'argument': conversion from 'int' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,33): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,33): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,33): warning C4244:             _Tp=float
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.hpp(226,33): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(16,18): warning C4091:  'extern ': ignored on left of 'Game' when no variable is declared
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(158,56): warning C4244:  'argument': conversion from 'float' to 'uint8_t', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(158,47): warning C4244:  'argument': conversion from 'float' to 'uint8_t', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(158,38): warning C4244:  'argument': conversion from 'float' to 'uint8_t', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(165,23): warning C4244:  '=': conversion from 'unsigned __int64' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(166,26): warning C4244:  '=': conversion from 'unsigned __int64' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(201,21): warning C4244:  'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(558,57): warning C4244:  '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(652,16): warning C4244:  'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(667,32): warning C4244:  '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(682,30): warning C4244:  '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(821,42): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(884,109): warning C4244:  '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(954,72): warning C4244:  '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(957,19): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(984,20): warning C4244:  'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(992,28): warning C4244:  'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(993,20): warning C4244:  'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1124,20): warning C4244:  'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1127,26): warning C4244:  '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1189,20): warning C4244:  'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1190,20): warning C4244:  'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1192,1): warning C4244:  '-=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1193,1): warning C4244:  '-=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1215,66): warning C4244:  '=': conversion from 'const int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1224,67): warning C4244:  '=': conversion from 'const int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1232,65): warning C4244:  '=': conversion from 'const int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1258,25): warning C4244:  '=': conversion from 'const int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1268,25): warning C4244:  '=': conversion from 'const int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1308,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1314,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1322,24): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1344,68): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1383,40): warning C4244:  '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1384,40): warning C4244:  '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1385,40): warning C4244:  '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,106): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,72): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,72): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,72): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,72): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,72): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,39): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,39): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,39): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,39): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1397,39): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,106): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,72): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,72): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,72): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,72): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,72): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,39): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,39): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,39): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,39): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1398,39): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,122): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,122): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,122): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,122): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,122): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,61): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,61): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,61): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,61): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1485,61): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,123): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,123): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,123): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,123): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,123): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,62): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,62): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,62): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,62): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1486,62): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,123): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,123): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,123): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,123): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,123): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,62): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,62): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,62): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,62): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1487,62): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,123): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,123): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,123): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,123): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,123): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,62): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,62): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,62): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,62): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1488,62): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,123): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,123): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,123): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,123): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,123): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,62): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,62): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,62): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,62): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1489,62): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,125): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,125): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,125): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,125): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,125): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,63): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,63): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,63): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,63): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1490,63): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,125): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,125): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,125): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,125): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,125): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,63): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,63): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,63): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,63): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1491,63): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,125): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,125): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,125): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,125): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,125): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,63): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,63): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,63): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,63): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1492,63): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,125): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,125): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,125): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,125): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,125): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,63): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,63): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,63): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,63): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1493,63): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,125): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,125): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,125): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,125): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,125): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,63): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,63): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,63): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,63): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1494,63): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,1): warning C4305:  'argument': truncation from 'double' to 'float'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,124): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,124): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,124): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,124): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,124): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,62): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,62): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,62): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,62): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1497,62): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,125): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,125): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,125): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,125): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,125): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,63): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,63): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,63): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,63): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1498,63): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,125): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,125): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,125): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,125): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,125): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,63): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,63): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,63): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,63): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1499,63): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,125): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,125): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,125): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,125): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,125): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,63): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,63): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,63): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,63): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1500,63): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,125): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,125): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,125): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,125): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,125): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,63): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,63): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,63): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,63): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1501,63): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,127): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,127): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,127): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,127): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,127): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,64): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,64): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,64): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,64): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1502,64): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,127): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,127): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,127): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,127): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,127): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,64): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,64): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,64): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,64): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1503,64): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,127): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,127): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,127): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,127): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,127): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,64): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,64): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,64): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,64): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1504,64): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,127): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,127): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,127): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,127): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,127): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,64): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,64): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,64): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,64): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1505,64): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,127): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,127): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,127): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,127): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,127): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,64): warning C4244:  'argument': conversion from 'float' to '_Tp', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,64): warning C4244:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,64): warning C4244:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,64): warning C4244:             _Tp=int
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1506,64): warning C4244:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1544,18): warning C4477:  'sprintf_s' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'const _Ty'
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1544,18): warning C4477:         with
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1544,18): warning C4477:         [
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1544,18): warning C4477:             _Ty=cv::String
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1544,18): warning C4477:         ]
+C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\main.cpp(1639,13): warning C4326:  return type of 'main' should be 'int' instead of 'void'
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 1017 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  OpenCV2 Example.vcxproj -> C:\Users\Korean\source\repos\apple01644\Grid-Game\OpenCV\x64\Release\OpenCV2 Example.exe

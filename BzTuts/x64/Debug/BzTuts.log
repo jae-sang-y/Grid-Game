@@ -1,5 +1,0 @@
-﻿  Renderer.cpp
-C:\Users\Korean\source\repos\apple01644\Grid-Game\BzTuts\Renderer.cpp(309,40): warning C4267:  '=': conversion from 'size_t' to 'UINT', possible loss of data
-C:\Users\Korean\source\repos\apple01644\Grid-Game\BzTuts\Renderer.cpp(600,19): warning C4244:  '=': conversion from 'int' to 'FLOAT', possible loss of data
-C:\Users\Korean\source\repos\apple01644\Grid-Game\BzTuts\Renderer.cpp(601,20): warning C4244:  '=': conversion from 'int' to 'FLOAT', possible loss of data
-  BzTuts.vcxproj -> C:\Users\Korean\source\repos\apple01644\Grid-Game\x64\Debug\BzTuts.exe
