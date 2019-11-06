@@ -19,8 +19,8 @@ constexpr static int small_border_size = 1;
 
 constexpr static int FARM_LEVEL_MIN = 0;
 constexpr static int FARM_LEVEL_MAX = 15;
-constexpr static float FOOD_GAIN_PER_STEP = 2.6f;
-constexpr static float FARM_CONSUME_MANPOWER_PER_STEP = 0.01f;
+constexpr static float FOOD_GAIN_PER_STEP = 6.6f;
+constexpr static float FARM_CONSUME_MANPOWER_PER_STEP = 0.1f;
 constexpr static float FARM_CONSUME_PRODUCT_PER_STEP = 9.f;
 static float FARM_OUTPUT_FACTOR = 1;
 
@@ -53,26 +53,29 @@ const std::vector<Vec3b> Geo_color = {
 	Vec3b{ 234, 217, 153},
 	Vec3b{ 204,  72,  63},
 	Vec3b{ 190, 146, 112},
+	Vec3b{  76, 177,  34},
 };
 
 const std::vector<int> Geo_Food_Level = {
 	2,
-	4,
+	0,
 	1,
 	0,
 	0,
 	0,
-	0
+	0,
+	7
 };
 
 const std::vector<float> Geo_Mho = {
 	0.7f,
-	0.9f,
+	0.97f,
 	0.84f,
 	0.f,
-	0.95f,
+	0.995f,
 	0.6f,
-	0.72f
+	0.72f,
+	0.7f
 };
 
 const std::vector<bool> Geo_Livable = {
@@ -82,7 +85,8 @@ const std::vector<bool> Geo_Livable = {
 	false,
 	false,
 	false,
-	false
+	false,
+	true
 };
 
 const std::vector<bool> Geo_Accessable = {
@@ -92,6 +96,7 @@ const std::vector<bool> Geo_Accessable = {
 	false,
 	true,
 	false,
+	true,
 	true
 };
 
@@ -102,7 +107,9 @@ enum Geo {
 	Blocked,
 	ShallowOcean,
 	DeepOcean,
-	MediumOcean
+	MediumOcean,
+	Farmland,
+	Max
 };
 
 extern struct Block;
@@ -196,11 +203,14 @@ public:
 	bool isWar = false;
 	bool isAccessable = false;
 	int peace = 0;
+	int WarDuration = 0;
+
 	void Clear() {
 		isNeighbor = false;
 		isWar = false;
 		isAccessable = false;
 		peace = 0;
+		WarDuration = 0;
 	}
 
 	Relation(Relation&&) = delete;

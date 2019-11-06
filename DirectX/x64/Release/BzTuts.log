@@ -1,0 +1,14 @@
+﻿  compilation object save succeeded; see C:\Users\Korean\source\repos\apple01644\Grid-Game\x64\Release\PixelShader.cso
+  compilation object save succeeded; see C:\Users\Korean\source\repos\apple01644\Grid-Game\x64\Release\VertexShader.cso
+  Image Loader.cpp
+  main.cpp
+  Renderer.cpp
+C:\Users\Korean\source\repos\apple01644\Grid-Game\DirectX\Renderer.cpp(303,40): warning C4267:  '=': conversion from 'size_t' to 'UINT', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\DirectX\Renderer.cpp(593,19): warning C4244:  '=': conversion from 'int' to 'FLOAT', possible loss of data
+C:\Users\Korean\source\repos\apple01644\Grid-Game\DirectX\Renderer.cpp(594,20): warning C4244:  '=': conversion from 'int' to 'FLOAT', possible loss of data
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+C:\Users\Korean\source\repos\apple01644\Grid-Game\DirectX\Image Loader.cpp(91): warning C4715: 'GetDXGIFormatBitsPerPixel': not all control paths return a value
+  All 672 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  BzTuts.vcxproj -> C:\Users\Korean\source\repos\apple01644\Grid-Game\x64\Release\BzTuts.exe

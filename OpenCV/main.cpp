@@ -113,7 +113,7 @@ public:
 				block->rect = Rect(x * block_size, y * block_size, block_size, block_size);
 				Mat geo_rect = Mat(geo_img, block->rect);
 				auto geo = map.at<Vec3b>(y, x);
-				for (int i = 0; i < 7; ++i)
+				for (int i = 0; i < Geo::Max; ++i)
 				{
 					if (auto color = Geo_color[i]; geo == color)
 					{
@@ -451,7 +451,7 @@ public:
 				float& powerB = country->priority_power[blockB->X][blockB->Y];
 				int& rankB = country->priority_rank[blockB->X][blockB->Y];
 
-				if ((rankA > rankB || (rankA == rankB && powerA > powerB)) &&
+				if ((rankA > rankB || (rankA == rankB && powerA > powerB) || country->priority_time[blockB->X][blockB->Y] == 0) &&
 					(blockB->garrison == nullptr || blockB->garrison->owner != country) &&
 					!(blockA->owner != nullptr && blockA->owner != country && (!(relations[country->ID][blockA->owner->ID]->isAccessable))) &&
 					Geo_Accessable[blockB->geo]
@@ -565,8 +565,8 @@ public:
 					country->capital_power[blockA->X][blockA->Y] = 0;
 				}
 				//Set Block Value
-				float power;
-				int rank;
+				float power = 0.1f;
+				int rank = 0;
 				bool force = false;
 
 				if (blockA->owner == country)
@@ -574,21 +574,29 @@ public:
 					country->access[blockA->X][blockA->Y] = 0;
 					if (country->stat_war_opponent > 0)
 					{
+						/*if (blockA == country->capital)
+						{
+							rank = 1;
+							power = 5.f * board_w * board_h;
+						}
+						else
+						{
+							rank = 0;
+							power = 50.f * board_w * board_h;
+						}*/
+					}
+					else
+					{
 						if (blockA == country->capital)
 						{
 							rank = 2;
-							power = 0.1f * board_w * board_h;
+							power = 50.f * board_w * board_h;
 						}
 						else
 						{
 							rank = 1;
-							power = 0.1f * board_w * board_h;
+							power = 50.f * board_w * board_h;
 						}
-					}
-					else
-					{
-						rank = 1;
-						power = 0.1f * board_w * board_h - country->distance_from_border[blockA->X][blockA->Y] / 32.f;
 					}
 				}
 				else
@@ -601,33 +609,40 @@ public:
 							if (blockA->garrison != nullptr && blockA->garrison->owner == blockA->owner)
 							{
 								rank = 4;
-								power = 0.4f;
+								power = 1.5f;
 							}
-							else
+							else if (blockA->garrison == nullptr)
 							{
-								if (blockA->owner->capital == blockA && blockA->owner->stat_troop_size == 0)
+								if (blockA->owner->capital == blockA)
 								{
-									rank = 5;
-									power = 0.1f * board_w * board_h;
+									if (blockA->owner->stat_troop_size == 0)
+									{
+										rank = 5;
+										power = 50.f * board_w * board_h;
+									}
+									else
+									{
+										rank = 3;
+										power = 15.f * board_w * board_h;
+									}
 								}
-								else
+								else if (blockA->owner->stat_troop_size == 0)
 								{
-									rank = 3;
-									power = 0.1f * board_w * board_h;
+									rank = 2;
+									power = 50.f * board_w * board_h;
 								}
 							}
 						}
 						else
 						{
 							rank = 0;
-							power = 0.01f * board_w * board_h;
-							force = true;
+							power = 0.1f * board_w * board_h;
 						}
 					}
 					else
 					{
 						rank = 0;
-						power = 0.01f * board_w * board_h;
+						power = 0.1f * board_w * board_h;
 					}
 				}
 
@@ -638,7 +653,7 @@ public:
 				{
 					prio_rank = rank;
 					prio_power = power;
-					country->priority_time[blockA->X][blockA->Y] = 3;
+					country->priority_time[blockA->X][blockA->Y] = 5;
 				}
 				else if (country->priority_time[blockA->X][blockA->Y] > 0)
 				{
@@ -710,6 +725,8 @@ public:
 		relationBA->isAccessable = true;
 		relationAB->peace = 12;
 		relationBA->peace = 12;
+		relationAB->WarDuration = 0;
+		relationBA->WarDuration = 0;
 
 		++countryA->stat_war_opponent;
 		++countryB->stat_war_opponent;
@@ -736,10 +753,12 @@ public:
 				if (!countryB->isExist) continue;
 				if (i != j)
 				{
-					Relation* relation = relations[i][j];
-					if (relation->isWar)
+					Relation* relationAB = relations[i][j];
+					Relation* relationBA = relations[j][i];
+					if (relationAB->isWar || relationBA->isWar)
 					{
 						++countryA->stat_war_opponent;
+						++relationAB->WarDuration;
 						countryA->stat_war_opponent_troop_size += countryB->stat_demesne_size;
 					}
 				}
@@ -763,7 +782,21 @@ public:
 
 					if (relationAB->isWar)
 					{
-						if (((countryA->stat_troop_size < 2 && countryB->stat_troop_size < 2)
+						if (relationAB->WarDuration > 90 && countryA->stat_troop_size > countryB->stat_troop_size
+							&& relationAB->peace == 0)
+						{
+							relationAB->isWar = false;
+							relationBA->isWar = false;
+							relationAB->isAccessable = false;
+							relationBA->isAccessable = false;
+
+							--countryA->stat_war_opponent;
+							--countryB->stat_war_opponent;
+
+							relationAB->peace = 12;
+							relationBA->peace = 12;
+						}
+						else if (((countryA->stat_troop_size < 2 && countryB->stat_troop_size < 2)
 							|| countryA->access[countryB->capital->X][countryB->capital->Y] >= 1)
 							&& relationAB->peace == 0)
 						{
@@ -937,7 +970,7 @@ public:
 					blockA->food += blockA->farm_level;
 					if (blockA->food < 0) blockA->food = 0;
 					blockA->farm_level -= 1;
-					if (blockA->farm_level < 1) blockA->farm_level = 1;
+					if (blockA->farm_level < Geo_Food_Level[blockA->geo]) blockA->farm_level = Geo_Food_Level[blockA->geo];
 				}
 
 				//Manpower Gain
@@ -1068,10 +1101,15 @@ public:
 					{
 						if (relations[blockA->garrison->owner->ID][blockA->owner->ID]->isWar)
 						{
+							relations[blockA->garrison->owner->ID][blockA->owner->ID]->WarDuration = 0;
+							relations[blockA->owner->ID][blockA->garrison->owner->ID]->WarDuration = 0;
+
 							Country* pre_owner = blockA->owner;
 							blockA->owner = blockA->garrison->owner;
 							--blockA->garrison->size;
 							blockA->garrison->energy = 0;
+
+
 							event_conquer_block(blockA, pre_owner, blockA->owner);
 						}
 						else if (!relations[blockA->garrison->owner->ID][blockA->owner->ID]->isAccessable)
@@ -1118,7 +1156,7 @@ public:
 				{
 					if (onUnaccessable)
 					{
-						bool isAble = Geo_Accessable[blockB->geo];
+						bool isAble = Geo_Accessable[blockB->geo] && blockB->garrison == nullptr;
 						if (isAble)
 						{
 							float value = distance_from_border - blockA->garrison->owner->distance_from_border[blockB->X][blockB->Y];
@@ -1134,21 +1172,12 @@ public:
 						bool isAble = Geo_Accessable[blockB->geo];
 
 						//Foregin Demsne
-						if (isAble && blockA->garrison->owner && blockB->owner != nullptr && blockA->garrison->owner != blockB->owner)
+						if (isAble && blockB->owner != nullptr && blockA->garrison->owner != blockB->owner)
 						{
 							Relation* relationAB = relations[blockA->garrison->owner->ID][blockB->owner->ID];
 							if (!relationAB->isAccessable)
 							{
-								if (blockA->owner != blockA->garrison->owner && blockA->owner != nullptr)
-								{
-									Relation* relationAC = relations[blockA->garrison->owner->ID][blockB->owner->ID];
-									if (relationAC->isAccessable && (!relationAB->isAccessable))
-										isAble = false;
-								}
-								else
-								{
-									isAble = false;
-								}
+								isAble = false;
 							}
 						}
 

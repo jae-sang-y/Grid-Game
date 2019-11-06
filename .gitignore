@@ -18,3 +18,7 @@
 /.vs/BzTuts/v16/ipch/AutoPCH/199da211471ae3b6/MAIN.ipch
 *.ipch
 /.vs/VSWorkspaceState.json
+/x64/Release/OpenCV2 Example.iobj
+*.ipdb
+*.iobj
+/OpenCV/x64/Debug/OpenCV2 Example.log
