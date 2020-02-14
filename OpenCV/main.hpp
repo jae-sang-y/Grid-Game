@@ -41,7 +41,7 @@ constexpr static float INFO_BUILD_POWER_DECREASE_PER_STEP = 0.1f;
 constexpr static float INFO_MAN_POWER_DECREASE_PER_STEP = 0.1f;
 constexpr static float INFO_SPREAD_FACTOR_BUILD = 0.02f;
 
-constexpr static int MAX_COUNTRY_COUNT = 80;
+constexpr static int MAX_COUNTRY_COUNT = 15;
 
 const static vector<string> Month_Name = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep","Oct", "Nov", "Dec" };
 
@@ -58,7 +58,7 @@ const std::vector<Vec3b> Geo_color = {
 
 const std::vector<int> Geo_Food_Level = {
 	2,
-	0,
+	10,
 	1,
 	0,
 	0,
@@ -184,7 +184,6 @@ public:
 	int info_loaf;
 
 	int ruin = 0;
-	
 
 	Country* owner = nullptr;
 	Troop* garrison = nullptr;

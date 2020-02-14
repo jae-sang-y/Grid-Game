@@ -148,7 +148,7 @@ public:
 				int x = mt() % board_w;
 				int y = mt() % board_h;
 
-				if (Block* block = board[x][y]; block->owner == nullptr && block->geo == Geo::River)
+				if (Block* block = board[x][y]; block->owner == nullptr && Geo_Livable[block->geo] && block->geo == Geo::River)
 				{
 					float r = (mt() % 1000) / 1000.f, g = (mt() % 1000) / 1000.f, b = (mt() % 1000) / 1000.f;
 					float m = max(max(r, g), b);
@@ -451,7 +451,6 @@ public:
 				int& rankB = country->priority_rank[blockB->X][blockB->Y];
 
 				if ((rankA > rankB || (rankA == rankB && powerA > powerB) || country->priority_time[blockB->X][blockB->Y] == 0) &&
-					(blockB->garrison == nullptr || blockB->garrison->owner != country) &&
 					!(blockA->owner != nullptr && blockA->owner != country && (!(relations[country->ID][blockA->owner->ID]->isAccessable))) &&
 					Geo_Accessable[blockB->geo]
 					)
@@ -571,30 +570,17 @@ public:
 				if (blockA->owner == country)
 				{
 					country->access[blockA->X][blockA->Y] = 0;
-					if (country->stat_war_opponent > 0)
+					if (country->stat_war_opponent == 0)
 					{
-						/*if (blockA == country->capital)
-						{
-							rank = 1;
-							power = 5.f * board_w * board_h;
-						}
-						else
-						{
-							rank = 0;
-							power = 50.f * board_w * board_h;
-						}*/
-					}
-					else
-					{
-						if (blockA == country->capital)
+						if (blockA->owner->capital == blockA)
 						{
 							rank = 2;
-							power = 50.f * board_w * board_h;
+							power = 1.1f;
 						}
 						else
 						{
 							rank = 1;
-							power = 50.f * board_w * board_h;
+							power = 1.1f;
 						}
 					}
 				}
@@ -608,30 +594,30 @@ public:
 							if (blockA->owner->capital == blockA)
 							{
 								rank = 4;
-								power = 1.f * board_w * board_h;
+								power = 1.1f;
 							}
 							else if (blockA->garrison != nullptr && blockA->garrison->owner == blockA->owner)
 							{
 								rank = 5;
-								power = 0.5f * board_w * board_h;
+								power = 1.1f;
 							}
 							else
 							{
-								rank = 2;
-								power = 1.f * board_w * board_h;
+								rank = 3;
+								power = 1.1f;
 							}
 						}
-						else
+						/*else
 						{
 							rank = 0;
 							power = 0.1f * board_w * board_h;
-						}
+						}*/
 					}
-					else
+					/*else
 					{
 						rank = 0;
 						power = 0.1f * board_w * board_h;
-					}
+					}*/
 				}
 
 				float& prio_power = country->priority_power[blockA->X][blockA->Y];
