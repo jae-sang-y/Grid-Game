@@ -314,7 +314,7 @@ public:
 							if (blockA->owner == pre_owner)
 							{
 								if (owner->capital_power[blockA->X][blockA->Y] >
-								pre_owner->capital_power[blockA->X][blockA->Y] ||
+									pre_owner->capital_power[blockA->X][blockA->Y] ||
 									blockA->info_loaf != pre_owner->capital->info_loaf)
 								{
 									blockA->owner = owner;
@@ -363,7 +363,7 @@ public:
 			if (owner != nullptr)
 			{
 				++owner->stat_demesne_size;
-				
+
 				location->man_level /= 3;
 				location->food /= 3;
 				location->product /= 3;
@@ -422,13 +422,12 @@ public:
 						{
 							value = country->access[blockA->X][blockA->Y];
 						}
-						
 					}
 					else
 					{
 						value = -1;
 					}
-					
+
 					if (value < country->access[blockB->X][blockB->Y] && value >= 0)
 						country->access[blockB->X][blockB->Y] = value;
 				}
@@ -476,10 +475,10 @@ public:
 				blockB->info_farm_power = effect;
 			}
 		}
-		if (int quantity = 1; 
-			(blockA->info_farm_rank <= blockB->info_farm_rank && 
-			blockA->man_level > quantity && 
-			blockB->man_level + 1 < blockB->build_level * 4) || blockA->man_level > 1000)
+		if (int quantity = 1;
+			(blockA->info_farm_rank <= blockB->info_farm_rank &&
+				blockA->man_level > quantity&&
+				blockB->man_level + 1 < blockB->build_level * 4) || blockA->man_level > 1000)
 		{
 			blockA->manpower *= (blockA->man_level - 1.f) / blockA->man_level;
 			blockA->man_level -= quantity;
@@ -494,16 +493,16 @@ public:
 				blockB->info_build_power = effect;
 			}
 		}
-		if (int quantity = 1; 
-			(blockA->info_build_rank <= blockB->info_build_rank && 
-			blockA->man_level > quantity && 
-			blockB->man_level + 1 < blockB->build_level * 4) || blockA->man_level > 1000)
+		if (int quantity = 1;
+			(blockA->info_build_rank <= blockB->info_build_rank &&
+				blockA->man_level > quantity&&
+				blockB->man_level + 1 < blockB->build_level * 4) || blockA->man_level > 1000)
 		{
 			blockA->manpower *= (blockA->man_level - 1.f) / blockA->man_level;
 			blockA->man_level -= quantity;
 			blockB->man_level += quantity;
 		}
-		
+
 		if (blockA->info_man_rank > blockB->info_man_rank)
 		{
 			if (float effect = blockA->info_man_power * max(0.f, min(0.999f, Geo_Mho[blockA->geo] + INFO_SPREAD_FACTOR_BUILD * blockA->build_level)) - INFO_MAN_POWER_DECREASE_PER_STEP; effect > 0)
@@ -514,16 +513,16 @@ public:
 		}
 		if (blockA->info_man_rank <= blockB->info_man_rank || blockA->food > 255 || blockA->product > 255)
 		{
-			if (float quantity = 0.004f * blockB->build_level; 
-				(blockA->farm_level > 1 && 
-				blockB->food + quantity < 255) || blockA->food > 255)
+			if (float quantity = 0.004f * blockB->build_level;
+				(blockA->farm_level > 1 &&
+					blockB->food + quantity < 255) || blockA->food > 255)
 			{
 				blockA->food -= quantity;
 				blockB->food += quantity;
 			}
-			if (float quantity = 0.1f + 0.008f * blockB->build_level; 
-				(blockA->build_level > 1 && 
-				blockB->product + quantity < 255 && blockA->product) || blockA->product > 255)
+			if (float quantity = 0.1f + 0.008f * blockB->build_level;
+				(blockA->build_level > 1 &&
+					blockB->product + quantity < 255 && blockA->product) || blockA->product > 255)
 			{
 				blockA->product -= quantity;
 				blockB->product += quantity;
@@ -556,9 +555,9 @@ public:
 				if (blockA == country->capital)
 				{
 					country->capital_power[blockA->X][blockA->Y] = 100 +
-						9 * ((1 + blockA->build_level) + 
+						9 * ((1 + blockA->build_level) +
 						(1 + blockA->farm_level) +
-						(1 + blockA->man_level / 64));
+							(1 + blockA->man_level / 64));
 				}
 				else if (country->capital_power[blockA->X][blockA->Y] < 0)
 				{
@@ -606,31 +605,20 @@ public:
 					{
 						if (relations[country->ID][blockA->owner->ID]->isWar)
 						{
-							if (blockA->garrison != nullptr && blockA->garrison->owner == blockA->owner)
+							if (blockA->owner->capital == blockA)
 							{
 								rank = 4;
-								power = 1.5f;
+								power = 1.f * board_w * board_h;
 							}
-							else if (blockA->garrison == nullptr)
+							else if (blockA->garrison != nullptr && blockA->garrison->owner == blockA->owner)
 							{
-								if (blockA->owner->capital == blockA)
-								{
-									if (blockA->owner->stat_troop_size == 0)
-									{
-										rank = 5;
-										power = 50.f * board_w * board_h;
-									}
-									else
-									{
-										rank = 3;
-										power = 15.f * board_w * board_h;
-									}
-								}
-								else if (blockA->owner->stat_troop_size == 0)
-								{
-									rank = 2;
-									power = 50.f * board_w * board_h;
-								}
+								rank = 5;
+								power = 0.5f * board_w * board_h;
+							}
+							else
+							{
+								rank = 2;
+								power = 1.f * board_w * board_h;
 							}
 						}
 						else
@@ -815,10 +803,10 @@ public:
 					else if (
 						countryB->stat_war_opponent == 0)
 					{
-						if (relationAB->peace == 0 && 
+						if (relationAB->peace == 0 &&
 							(relationAB->isNeighbor || countryA->access[countryB->capital->X][countryB->capital->Y] <= 1) &&
 							countryA->stat_troop_size - countryA->stat_war_opponent_troop_size
-							>
+						>
 							(countryB->stat_troop_size) &&
 							countryA->stat_sum_ruin <= 0
 							)
@@ -832,7 +820,6 @@ public:
 							}
 						}
 					}
-
 				}
 			}
 
@@ -886,7 +873,7 @@ public:
 			if (blockA->owner != nullptr)
 			{
 				blockA->owner->stat_sum_ruin += blockA->ruin;
-				
+
 				for (const auto& blockB : blockA->neighbor)
 				{
 					if (blockB->owner != nullptr && blockA->owner != blockB->owner)
@@ -899,7 +886,6 @@ public:
 		for (Country* country : countries_data)
 		{
 			if (!country->isExist) {
-
 				for (Block* blockA : board_data)
 				{
 					if (blockA->owner == nullptr && Geo_Livable[blockA->geo] && blockA->garrison == nullptr && month == country->ID % 12 && mt() % (board_w * board_h) == 0)
@@ -914,7 +900,7 @@ public:
 				}
 			}
 			if (day == country->ID % 31) country->trained_troop += country->stat_demesne_size / 36.f + 1;
-			if (int max = country->stat_demesne_size / 9 + 10;country->trained_troop > max) country->trained_troop = max;
+			if (int max = country->stat_demesne_size / 9 + 10; country->trained_troop > max) country->trained_troop = max;
 		}
 
 		for (const auto& blockA : board_data)
@@ -1007,7 +993,7 @@ public:
 
 				//Upgrade level
 				if (float cost = blockA->man_level * MAN_UPGRADE_COST_FACTOR;
-					blockA->food > cost &&
+					blockA->food > cost&&
 					blockA->man_level < MAN_LEVEL_MAX && blockA->owner != nullptr)
 				{
 					blockA->food -= cost;
@@ -1015,7 +1001,7 @@ public:
 				}
 
 				if (float cost = 50 + blockA->farm_level * blockA->farm_level * 4;
-					blockA->manpower > cost &&
+					blockA->manpower > cost&&
 					blockA->farm_level < FARM_LEVEL_MAX && blockA->owner != nullptr)
 				{
 					blockA->manpower -= cost;
@@ -1024,8 +1010,8 @@ public:
 
 				if (float cost_product = 1 + blockA->build_level * blockA->build_level * blockA->build_level / 3,
 					cost_manpower = 60 + 53 * blockA->build_level;
-					blockA->manpower > cost_manpower &&
-					blockA->product > cost_product &&
+					blockA->manpower > cost_manpower&&
+					blockA->product > cost_product&&
 					blockA->build_level < BUILD_LEVEL_MAX && blockA->owner != nullptr)
 				{
 					blockA->manpower -= cost_manpower;
@@ -1109,7 +1095,6 @@ public:
 							--blockA->garrison->size;
 							blockA->garrison->energy = 0;
 
-
 							event_conquer_block(blockA, pre_owner, blockA->owner);
 						}
 						else if (!relations[blockA->garrison->owner->ID][blockA->owner->ID]->isAccessable)
@@ -1117,8 +1102,6 @@ public:
 							onUnaccessable = true;
 						}
 					}
-
-
 				}
 				else
 				{
@@ -1151,7 +1134,6 @@ public:
 				}*/
 				//if (Geo_Livable[blockA->geo] && Geo_Livable[blockB->geo])
 
-				
 				if (blockA->garrison != nullptr)
 				{
 					if (onUnaccessable)
@@ -1402,7 +1384,6 @@ public:
 						Blend(Hex(0xffffff), Hex(0x000000), IntoRange(select_country->capital_power[blockA->X][blockA->Y], 0, max), r, g, b);
 						if (select_country->capital_power[blockA->X][blockA->Y] > 100)
 							r = 255;
-						
 					}
 				}
 				else if (showmode == 9)
