@@ -19,20 +19,20 @@ constexpr static int small_border_size = 1;
 
 constexpr static int FARM_LEVEL_MIN = 0;
 constexpr static int FARM_LEVEL_MAX = 15;
-constexpr static float FOOD_GAIN_PER_STEP = 6.6f;
+static float FOOD_GAIN_PER_STEP = 6.6f;
 constexpr static float FARM_CONSUME_MANPOWER_PER_STEP = 0.1f;
 constexpr static float FARM_CONSUME_PRODUCT_PER_STEP = 9.f;
 static float FARM_OUTPUT_FACTOR = 1;
 
 constexpr static int BUILD_LEVEL_MIN = 0;
 constexpr static int BUILD_LEVEL_MAX = 15;
-constexpr static float PRODUCT_GAIN_PER_STEP = 0.0005f;
+static float PRODUCT_GAIN_PER_STEP = 0.0005f;
 constexpr static float BUILD_CONSUME_MANPOWER_PER_STEP = 0.01f;
 constexpr static float BUILD_CONSUME_PRODUCT_PER_STEP = 0.1f;
 
 constexpr static int MAN_LEVEL_MIN = 0;
 constexpr static int MAN_LEVEL_MAX = 1000;
-constexpr static float MANPOWER_GAIN_PER_STEP = 0.01f;
+static float MANPOWER_GAIN_PER_STEP = 0.01f;
 constexpr static float MAN_CONSUME_FOOD_PER_STEP = 0.0005f;
 constexpr static float MAN_UPGRADE_COST_FACTOR = 1.f;
 
@@ -41,7 +41,7 @@ constexpr static float INFO_BUILD_POWER_DECREASE_PER_STEP = 0.1f;
 constexpr static float INFO_MAN_POWER_DECREASE_PER_STEP = 0.1f;
 constexpr static float INFO_SPREAD_FACTOR_BUILD = 0.02f;
 
-constexpr static int MAX_COUNTRY_COUNT = 15;
+constexpr static int MAX_COUNTRY_COUNT = 40;
 
 const static vector<string> Month_Name = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep","Oct", "Nov", "Dec" };
 
@@ -68,14 +68,14 @@ const std::vector<int> Geo_Food_Level = {
 };
 
 const std::vector<float> Geo_Mho = {
-	0.7f,
+	0.6f,
 	0.97f,
-	0.84f,
+	0.74f,
 	0.f,
 	0.995f,
-	0.6f,
-	0.72f,
-	0.7f
+	0.7f,
+	0.82f,
+	0.6f
 };
 
 const std::vector<bool> Geo_Livable = {
