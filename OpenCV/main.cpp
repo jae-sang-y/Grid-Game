@@ -86,7 +86,7 @@ public:
 
 					if (isOnBoard(x2, y2))
 					{
-						block->neighbor.push_back(board[x2][y2]);
+						block->neighbor.insert({ w, board[x2][y2] });
 						switch (w)
 						{
 						case 0:
@@ -131,10 +131,10 @@ public:
 		for (const auto& blockA : board_data)
 		{
 			int i = 0;
-			for (const auto& blockB : blockA->neighbor)
+			for (const auto& neighbor : blockA->neighbor)
 			{
 				//Draw Geo Border
-				if (Geo_Livable[blockA->geo] != Geo_Livable[blockB->geo])
+				if (Geo_Livable[blockA->geo] != Geo_Livable[neighbor.second->geo])
 				{
 					Mat(geo_img, blockA->small_border[i]) = Scalar(0, 0, 0);
 				}
@@ -259,6 +259,82 @@ public:
 		}
 	}
 
+	void admit_totally_defeat(Country* winner, Country* loser)
+	{
+		for (Block* blockA : board_data)
+		{
+			if (blockA->owner == loser)
+			{
+				winner->capital->man_level += blockA->man_level;
+				winner->capital->food += blockA->food;
+				winner->capital->product += blockA->product;
+				blockA->man_level = 0;
+				blockA->man_level = 0;
+				blockA->man_level = 0;
+				if (winner->capital_power[blockA->X][blockA->Y] > 100)
+					blockA->owner = winner;
+				else
+					blockA->owner = nullptr;
+			}
+			if (blockA->garrison != nullptr && blockA->garrison->owner == loser)
+			{
+				blockA->garrison->owner = winner;
+			}
+		}
+
+		event_fall_country(loser);
+	}
+
+	void admit_partially_defeat(Country* winner, Country* loser)
+	{
+		int peace_time = 360;
+
+		for (Block* blockA : board_data)
+		{
+			if (blockA->owner == loser)
+			{
+				if (winner->capital_power[blockA->X][blockA->Y] >
+					loser->capital_power[blockA->X][blockA->Y] + 100 ||
+					blockA->info_loaf != loser->capital->info_loaf)
+				{
+					blockA->owner = winner;
+					event_take_block_peacely(blockA, loser, winner);
+					++peace_time;
+				}
+			}
+			else if (blockA->owner == winner)
+			{
+				if (winner->capital_power[blockA->X][blockA->Y] + 100 <
+					loser->capital_power[blockA->X][blockA->Y] && blockA->ruin > 0)
+				{
+					blockA->owner = loser;
+					winner->capital->man_level += blockA->man_level;
+					winner->capital->food += blockA->food;
+					winner->capital->product += blockA->product;
+					blockA->man_level = 0;
+					blockA->man_level = 0;
+					blockA->man_level = 0;
+					event_take_block_peacely(blockA, winner, loser);
+					--peace_time;
+				}
+			}
+		}
+
+		if (peace_time > 1500) peace_time = 1500;
+
+		Relation* relationAB = relations[winner->ID][loser->ID];
+		Relation* relationBA = relations[loser->ID][winner->ID];
+
+		relationAB->isWar = false;
+		relationBA->isWar = false;
+		relationAB->isAccessable = false;
+		relationBA->isAccessable = false;
+		relationAB->peace = peace_time / 30;
+		relationBA->peace = peace_time / 30;
+
+		action_give_new_capital(loser);
+	}
+
 	void event_conquer_block(Block* location, Country* pre_owner, Country* owner) {
 		if (pre_owner != nullptr)
 		{
@@ -267,101 +343,13 @@ public:
 			{
 				if (owner != nullptr)
 				{
-					if (pre_owner->stat_troop_size == 0 && pre_owner->stat_demesne_size * 10 < owner->stat_demesne_size)
+					if (pre_owner->stat_troop_size <= 1 && owner->stat_troop_size >= 10 && pre_owner->stat_demesne_size * 10 < owner->stat_demesne_size)
 					{
-						location->ruin = 1000;
-						++owner->stat_demesne_size;
-
-						owner->capital->man_level += location->man_level * 4 / 5;
-						owner->capital->food += location->food * 4 / 5;
-						owner->capital->product += location->product * 4 / 5;
-
-						location->man_level /= 5;
-						location->food /= 5;
-						location->product /= 5;
-
-						for (Block* blockA : board_data)
-						{
-							if (blockA->owner == pre_owner)
-							{
-								owner->capital->man_level += blockA->man_level;
-								owner->capital->food += blockA->food;
-								owner->capital->product += blockA->product;
-								blockA->man_level = 0;
-								blockA->man_level = 0;
-								blockA->man_level = 0;
-								if (owner->capital_power[blockA->X][blockA->Y] > 100)
-									blockA->owner = owner;
-								else
-									blockA->owner = nullptr;
-							}
-							if (blockA->garrison != nullptr && blockA->garrison->owner == pre_owner)
-							{
-								blockA->garrison->owner = owner;
-							}
-						}
-
-						event_fall_country(pre_owner);
+						admit_totally_defeat(owner, pre_owner);
 					}
 					else if (pre_owner->stat_troop_size == 0 && pre_owner->stat_war_opponent == 1)
 					{
-						int peace_time = 360;
-
-						location->ruin = 1000;
-						++owner->stat_demesne_size;
-
-						owner->capital->man_level += location->man_level * 4 / 5;
-						owner->capital->food += location->food * 4 / 5;
-						owner->capital->product += location->product * 4 / 5;
-
-						location->man_level /= 5;
-						location->food /= 5;
-						location->product /= 5;
-
-						for (Block* blockA : board_data)
-						{
-							if (blockA->owner == pre_owner)
-							{
-								if (owner->capital_power[blockA->X][blockA->Y] >
-									pre_owner->capital_power[blockA->X][blockA->Y] + 100 ||
-									blockA->info_loaf != pre_owner->capital->info_loaf)
-								{
-									blockA->owner = owner;
-									event_take_block_peacely(blockA, pre_owner, owner);
-									++peace_time;
-								}
-							}
-							else if (blockA->owner == owner)
-							{
-								if (owner->capital_power[blockA->X][blockA->Y] + 100 <
-									pre_owner->capital_power[blockA->X][blockA->Y] && blockA->ruin > 0)
-								{
-									blockA->owner = pre_owner;
-									owner->capital->man_level += blockA->man_level;
-									owner->capital->food += blockA->food;
-									owner->capital->product += blockA->product;
-									blockA->man_level = 0;
-									blockA->man_level = 0;
-									blockA->man_level = 0;
-									event_take_block_peacely(blockA, owner, pre_owner);
-									--peace_time;
-								}
-							}
-						}
-
-						if (peace_time > 1500) peace_time = 1500;
-
-						Relation* relationAB = relations[owner->ID][pre_owner->ID];
-						Relation* relationBA = relations[pre_owner->ID][owner->ID];
-
-						relationAB->isWar = false;
-						relationBA->isWar = false;
-						relationAB->isAccessable = false;
-						relationBA->isAccessable = false;
-						relationAB->peace = peace_time / 30;
-						relationBA->peace = peace_time / 30;
-
-						action_give_new_capital(pre_owner);
+						admit_partially_defeat(owner, pre_owner);
 						return;
 					}
 					else
@@ -469,14 +457,16 @@ public:
 				float& powerB = country->priority_power[blockB->X][blockB->Y];
 				int& rankB = country->priority_rank[blockB->X][blockB->Y];
 
-				bool blocked_by_garrison = !(blockA->garrison == nullptr || (blockA->garrison->owner != country && relations[country->ID][blockA->garrison->owner->ID]->isWar));
-
-				if (blocked_by_garrison)
-					powerA /= 2;
+				bool blocked_by_garrison = false;
+				if (blockA->garrison != nullptr) {
+					blocked_by_garrison =
+						(blockA->garrison->owner != country && !relations[country->ID][blockA->garrison->owner->ID]->isWar);
+					//(blockA->garrison->owner == country && blockA->garrison->energy < 30);
+				}
 
 				if ((rankA > rankB || (rankA == rankB && powerA > powerB) || country->priority_time[blockB->X][blockB->Y] == 0) &&
 					!(blockA->owner != nullptr && blockA->owner != country && (!(relations[country->ID][blockA->owner->ID]->isAccessable))) &&
-					Geo_Accessable[blockB->geo] /*&& */
+					Geo_Accessable[blockB->geo] && !blocked_by_garrison/*&& */
 					)
 				{
 					if (float effect = powerA * max(0.999f, Geo_Mho[blockA->geo] + INFO_SPREAD_FACTOR_BUILD * blockA->build_level) - 0.01f; effect > 0)
@@ -500,7 +490,7 @@ public:
 		}
 		if (int quantity = 1;
 			(blockA->info_farm_rank <= blockB->info_farm_rank &&
-				blockA->man_level > quantity &&
+				blockA->man_level > quantity&&
 				blockB->man_level + 1 < blockB->build_level * 4) || blockA->man_level > 1000)
 		{
 			blockA->manpower *= (blockA->man_level - 1.f) / blockA->man_level;
@@ -518,7 +508,7 @@ public:
 		}
 		if (int quantity = 1;
 			(blockA->info_build_rank <= blockB->info_build_rank &&
-				blockA->man_level > quantity &&
+				blockA->man_level > quantity&&
 				blockB->man_level + 1 < blockB->build_level * 4) || blockA->man_level > 1000)
 		{
 			blockA->manpower *= (blockA->man_level - 1.f) / blockA->man_level;
@@ -562,10 +552,10 @@ public:
 				++country->distance_from_border[blockA->X][blockA->Y];
 				if (blockA->owner == country)
 				{
-					for (const auto& blockB : blockA->neighbor)
+					for (const auto& neighbor : blockA->neighbor)
 					{
-						if (blockB->owner != blockA->owner && blockB->owner != nullptr &&
-							Geo_Accessable[blockB->geo] && relations[blockA->owner->ID][blockB->owner->ID]->peace < 12)
+						if (neighbor.second->owner != blockA->owner && neighbor.second->owner != nullptr &&
+							Geo_Accessable[neighbor.second->geo] && relations[blockA->owner->ID][neighbor.second->owner->ID]->peace < 12)
 						{
 							country->distance_from_border[blockA->X][blockA->Y] = 0;
 							break;
@@ -598,41 +588,47 @@ public:
 				if (blockA->owner == country)
 				{
 					country->access[blockA->X][blockA->Y] = 0;
-					if (country->stat_war_opponent == 0)
+					if (blockA->garrison != nullptr && blockA->garrison->owner == country && blockA->garrison->energy == 30)
 					{
-						if (blockA->owner->capital == blockA)
+					}
+					else
+					{
+						//if (country->stat_war_opponent == 0)
 						{
-							rank = 2;
-							power = 1.1f;
-						}
-						else
-						{
-							rank = 1;
-							power = 1.1f;
+							if (blockA->owner->capital == blockA)
+							{
+								rank = 2;
+								power = 80.1f;
+							}
+							else
+							{
+								rank = 1;
+								power = 801.1f;
+							}
 						}
 					}
 				}
 				else
 				{
 					country->access[blockA->X][blockA->Y] = 65535;
-					if (blockA->owner != nullptr)
+					if (blockA->garrison != nullptr && blockA->garrison->owner != country && relations[country->ID][blockA->garrison->owner->ID]->isWar)
+					{
+						rank = 4;
+						power = 0.5f;
+					}
+					else if (blockA->owner != nullptr)
 					{
 						if (relations[country->ID][blockA->owner->ID]->isWar)
 						{
-							if (blockA->owner->capital == blockA && blockA->owner->stat_troop_size == 0)
+							if (blockA->owner->stat_troop_size == 0 && blockA->owner->capital == blockA)
 							{
 								rank = 5;
-								power = 8.1f;
-							}
-							else if (blockA->garrison != nullptr && blockA->garrison->owner == blockA->owner)
-							{
-								rank = 4;
-								power = 8.1f;
+								power = 0.5f;
 							}
 							else
 							{
 								rank = 3;
-								power = 8.1f;
+								power = 0.5f;
 							}
 						}
 						/*else
@@ -650,12 +646,11 @@ public:
 
 				float& prio_power = country->priority_power[blockA->X][blockA->Y];
 				int& prio_rank = country->priority_rank[blockA->X][blockA->Y];
-				if (prio_rank < rank || (prio_rank == rank && prio_power < power) || prio_power < 0 ||
-					country->priority_time[blockA->X][blockA->Y] <= 1)
+				if (prio_rank < rank || (prio_rank == rank && prio_power < power) || prio_power < 0)
 				{
 					prio_rank = rank;
 					prio_power = power;
-					country->priority_time[blockA->X][blockA->Y] = 5;
+					country->priority_time[blockA->X][blockA->Y] = 2 + rand() % 8;;
 				}
 				else if (country->priority_time[blockA->X][blockA->Y] > 0)
 				{
@@ -663,8 +658,7 @@ public:
 				}
 				else
 				{
-					prio_rank = 0;
-					prio_power = 0.1f;
+					prio_power /= 2;
 				}
 			}
 
@@ -718,8 +712,8 @@ public:
 		}
 
 		for (Block* blockA : board4_data)
-			for (Block* blockB : blockA->neighbor)
-				info_spread(blockA, blockB);
+			for (auto neighbor : blockA->neighbor)
+				info_spread(blockA, neighbor.second);
 	};
 
 	void action_declareWar(Country* countryA, Country* countryB, Relation* relationAB, Relation* relationBA)
@@ -912,11 +906,11 @@ public:
 			{
 				blockA->owner->stat_sum_ruin += blockA->ruin;
 
-				for (const auto& blockB : blockA->neighbor)
+				for (const auto& neighbor : blockA->neighbor)
 				{
-					if (blockB->owner != nullptr && blockA->owner != blockB->owner)
+					if (neighbor.second->owner != nullptr && blockA->owner != neighbor.second->owner)
 					{
-						relations[blockA->owner->ID][blockB->owner->ID]->isNeighbor = true;
+						relations[blockA->owner->ID][neighbor.second->owner->ID]->isNeighbor = true;
 					}
 				}
 			}
@@ -1033,7 +1027,7 @@ public:
 
 				//Upgrade level
 				if (float cost = blockA->man_level * MAN_UPGRADE_COST_FACTOR;
-					blockA->food > cost &&
+					blockA->food > cost&&
 					blockA->man_level < MAN_LEVEL_MAX && blockA->owner != nullptr)
 				{
 					blockA->food -= cost;
@@ -1041,7 +1035,7 @@ public:
 				}
 
 				if (float cost = 50 + blockA->farm_level * blockA->farm_level * 4;
-					blockA->manpower > cost &&
+					blockA->manpower > cost&&
 					blockA->farm_level < FARM_LEVEL_MAX && blockA->owner != nullptr)
 				{
 					blockA->manpower -= cost;
@@ -1050,8 +1044,8 @@ public:
 
 				if (float cost_product = 1 + blockA->build_level * blockA->build_level * blockA->build_level / 3,
 					cost_manpower = 60 + 53 * blockA->build_level;
-					blockA->manpower > cost_manpower &&
-					blockA->product > cost_product &&
+					blockA->manpower > cost_manpower&&
+					blockA->product > cost_product&&
 					blockA->build_level < BUILD_LEVEL_MAX && blockA->owner != nullptr)
 				{
 					blockA->manpower -= cost_manpower;
@@ -1074,7 +1068,7 @@ public:
 				for (const auto& blockA : board_data)
 				{
 					if (blockA->owner == nullptr && Geo_Livable[blockA->geo]
-						&& country->capital_power[blockA->X][blockA->Y] > threshold &&
+						&& country->capital_power[blockA->X][blockA->Y] > threshold&&
 						country->access[blockA->X][blockA->Y] == 0)
 					{
 						float value = country->capital_power[blockA->X][blockA->Y] / 150 + 2 - country->distance_from_border[blockA->X][blockA->Y];
@@ -1102,8 +1096,6 @@ public:
 		//Move Troop
 		for (const auto& blockA : board_data)
 		{
-			int i = 0;
-			int unit_forward = -1;
 			float priority_powerA = 0;
 			int priority_rankA = 0;
 			int distance_from_border = 0;
@@ -1121,6 +1113,8 @@ public:
 						++blockA->garrison->energy;
 						if (blockA->ruin <= 0)
 							++blockA->garrison->energy;
+						if (blockA->garrison->energy > 30)
+							blockA->garrison->energy = 30;
 					}
 					else if (blockA->garrison->energy < 0) blockA->garrison->energy = 0;
 
@@ -1152,9 +1146,9 @@ public:
 						event_take_block_peacely(blockA, nullptr, blockA->garrison->owner);
 					}
 
-					if (blockA->garrison->energy > 3 / max(0.001f, min(0.999f, Geo_Mho[blockA->geo] + INFO_SPREAD_FACTOR_BUILD * blockA->build_level)))
+					if (blockA->garrison->forward == -1)
 					{
-						for (const auto& blockB : blockA->neighbor)
+						for (const auto& neighbor : blockA->neighbor)
 						{
 							/*if (blockA->owner != nullptr)
 							{
@@ -1180,25 +1174,25 @@ public:
 
 							if (onUnaccessable)
 							{
-								bool isAble = Geo_Accessable[blockB->geo] && blockB->garrison == nullptr;
+								bool isAble = Geo_Accessable[neighbor.second->geo] && neighbor.second->garrison == nullptr;
 								if (isAble)
 								{
-									float value = distance_from_border - blockA->garrison->owner->distance_from_border[blockB->X][blockB->Y];
+									float value = distance_from_border - blockA->garrison->owner->distance_from_border[neighbor.second->X][neighbor.second->Y];
 									if (value > priority_rankA)
 									{
 										priority_rankA = value;
-										unit_forward = i;
+										blockA->garrison->forward = neighbor.first;
 									}
 								}
 							}
 							else
 							{
-								bool isAble = Geo_Accessable[blockB->geo];
+								bool isAble = Geo_Accessable[neighbor.second->geo];
 
-								//Foregin Demsne
-								if (isAble && blockB->owner != nullptr && blockA->garrison->owner != blockB->owner)
+								//Foregin Demense
+								if (isAble && neighbor.second->owner != nullptr && blockA->garrison->owner != neighbor.second->owner)
 								{
-									Relation* relationAB = relations[blockA->garrison->owner->ID][blockB->owner->ID];
+									Relation* relationAB = relations[blockA->garrison->owner->ID][neighbor.second->owner->ID];
 									if (!relationAB->isAccessable)
 									{
 										isAble = false;
@@ -1207,48 +1201,74 @@ public:
 
 								if (isAble)
 								{
-									float priority_powerB = blockA->garrison->owner->priority_power[blockB->X][blockB->Y];
-									int priority_rankB = blockA->garrison->owner->priority_rank[blockB->X][blockB->Y];
+									float priority_powerB = blockA->garrison->owner->priority_power[neighbor.second->X][neighbor.second->Y];
+									int priority_rankB = blockA->garrison->owner->priority_rank[neighbor.second->X][neighbor.second->Y];
 									if ((priority_rankB == priority_rankA && priority_powerB > priority_powerA + 0.0001f) ||
 										(priority_rankB > priority_rankA)
 										)
 									{
-										unit_forward = i;
+										blockA->garrison->forward = neighbor.first;
 										priority_rankA = priority_rankB;
 										priority_powerA = priority_powerB;
 									}
 								}
 							}
-							++i;
 						}
-
-						if (blockA->garrison != nullptr && unit_forward != -1)
+					}
+					else if (blockA->garrison->energy > 3 / max(0.1f, min(0.999f, Geo_Mho[blockA->geo] + INFO_SPREAD_FACTOR_BUILD * blockA->build_level)))
+					{
+						if (blockA->garrison != nullptr && blockA->garrison->forward != -1)
 						{
-							if (blockA->neighbor[unit_forward]->garrison == nullptr)
+							if (blockA->neighbor[blockA->garrison->forward]->garrison == nullptr)
 							{
 								Troop* ptr = blockA->garrison;
 								blockA->garrison = nullptr;
 								ptr->ground = nullptr;
 								ptr->energy = 0;
 								Block* blockB = blockA->
-									neighbor[unit_forward];
+									neighbor[ptr->forward];
 								blockB->garrison = ptr;
 								ptr->ground = blockB;
+								ptr->forward = -1;
 								ptr = nullptr;
 							}
-							else if (Block* blockB = blockA->neighbor[unit_forward]; blockA->garrison->owner != blockB->garrison->owner)
+							else if (Block* blockB = blockA->neighbor[blockA->garrison->forward]; blockA->garrison->owner != blockB->garrison->owner)
 							{
 								float damageB = blockA->garrison->size / 5 + 1;
 								blockB->garrison->size -= damageB;
 
 								float damageA = blockB->garrison->size / 5 + 1;
 								blockA->garrison->size -= damageA;
+								blockA->garrison->forward = -1;
+							}
+							else
+							{
+								blockA->garrison->forward = -1;
 							}
 						}
 					}
 				}
 				else
 				{
+					--blockA->garrison->owner->stat_troop_size;
+					/*if (blockA->garrison->owner->stat_troop_size <= 0)
+					{
+						if (blockA->garrison->owner->stat_war_opponent == 1)
+						{
+							Country* winner = nullptr;
+							for (Country* countryA : countries)
+							{
+								if (countryA->ID == blockA->garrison->owner->ID) continue;
+								Relation* BA = relations[blockA->garrison->owner->ID][countryA->ID];
+								if (BA->isWar)
+								{
+									winner = countryA;
+									break;
+								}
+							}
+							admit_totally_defeat(winner, blockA->garrison->owner);
+						}
+					}*/
 					delete blockA->garrison;
 					blockA->garrison = nullptr;
 				}
@@ -1314,7 +1334,7 @@ public:
 			{
 				for (const auto& blockA : board_data)
 				{
-					if (const auto gage = select_country->priority_rank[blockA->X][blockA->Y];
+					if (const auto gage = select_country->priority_power[blockA->X][blockA->Y];
 						gage > max) max = gage;
 				}
 			}
@@ -1405,7 +1425,7 @@ public:
 					if (select_country != nullptr)
 					{
 						Blend(Hex(0xffffff), Hex(0x000000),
-							IntoRange(select_country->priority_rank[blockA->X][blockA->Y], 0, max),
+							IntoRange(select_country->priority_power[blockA->X][blockA->Y], 0, max),
 							r, g, b);
 					}
 				}
@@ -1459,6 +1479,32 @@ public:
 					{
 						circle(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.5f)), block_size * 0.35f, Scalar(blockA->garrison->owner->b, blockA->garrison->owner->g, blockA->garrison->owner->r, 255), FILLED);
 						circle(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.5f)), block_size * 0.35f, Scalar(blockA->garrison->owner->b / 2, blockA->garrison->owner->g / 2, blockA->garrison->owner->r / 2, 255), 2, LINE_AA);
+						if (blockA->garrison->forward != -1)
+						{
+							static int W[4][2] = { {1, 0}, {0, -1}, {-1, 0}, {0, 1} };
+							line(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.5f)), Point(block_size * (blockA->X + 0.5f + 0.5f * W[blockA->garrison->forward][0]), block_size * (blockA->Y + 0.5f + 0.5f * W[blockA->garrison->forward][1])), Scalar(blockA->garrison->owner->b / 2, blockA->garrison->owner->g / 2, blockA->garrison->owner->r / 2, 255), 2, LINE_AA);
+						}
+						if (blockA->garrison->energy == 30)
+						{
+							line(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.0f)), Point(block_size * (blockA->X + 0.0f), block_size * (blockA->Y + 0.5f)), Scalar(blockA->garrison->owner->b / 2, blockA->garrison->owner->g / 2, blockA->garrison->owner->r / 2, 255), 1, LINE_AA);
+							line(UI_img, Point(block_size * (blockA->X + 1.0f), block_size * (blockA->Y + 0.5f)), Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.0f)), Scalar(blockA->garrison->owner->b / 2, blockA->garrison->owner->g / 2, blockA->garrison->owner->r / 2, 255), 1, LINE_AA);
+							line(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 1.0f)), Point(block_size * (blockA->X + 1.0f), block_size * (blockA->Y + 0.5f)), Scalar(blockA->garrison->owner->b / 2, blockA->garrison->owner->g / 2, blockA->garrison->owner->r / 2, 255), 1, LINE_AA);
+							line(UI_img, Point(block_size * (blockA->X + 0.0f), block_size * (blockA->Y + 0.5f)), Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 1.0f)), Scalar(blockA->garrison->owner->b / 2, blockA->garrison->owner->g / 2, blockA->garrison->owner->r / 2, 255), 1, LINE_AA);
+						}
+					}
+				}
+			}
+			if (select_country != nullptr)
+			{
+				if (showmode == 6)
+				{
+					switch (select_country->priority_rank[blockA->X][blockA->Y])
+					{
+					case 1: circle(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.5f)), block_size * 0.15f, Scalar(0, 0, 255, 255), FILLED); break;
+					case 2: circle(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.5f)), block_size * 0.15f, Scalar(0, 255, 255, 255), FILLED); break;
+					case 3: circle(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.5f)), block_size * 0.15f, Scalar(0, 255, 0, 255), FILLED); break;
+					case 4: circle(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.5f)), block_size * 0.15f, Scalar(255, 255, 0, 255), FILLED); break;
+					case 5: circle(UI_img, Point(block_size * (blockA->X + 0.5f), block_size * (blockA->Y + 0.5f)), block_size * 0.15f, Scalar(255, 0, 0, 255), FILLED); break;
 					}
 				}
 			}
@@ -1466,19 +1512,19 @@ public:
 		for (const auto& blockA : board_data)
 		{
 			int i = 0;
-			for (const auto& blockB : blockA->neighbor)
+			for (const auto& neighbor : blockA->neighbor)
 			{
 				int r = 0;
 				int g = 0;
 				int b = 0;
 				int a = 0;
-				if (showmode == 0 || showmode == 1 || showmode == 2 || showmode == 3 || showmode == 4 || showmode == 5 || showmode == 7 || showmode == 8 || showmode == 9)
+				if (showmode == 0 || showmode == 1 || showmode == 2 || showmode == 3 || showmode == 4 || showmode == 5 || showmode == 7 || showmode == 8 || showmode == 9 || showmode == 6)
 				{
-					if (blockA->owner != blockB->owner)
+					if (blockA->owner != neighbor.second->owner)
 					{
 						if (Country* countryA = blockA->owner; countryA != nullptr)
 						{
-							if (Country* countryB = blockB->owner; countryB != nullptr)
+							if (Country* countryB = neighbor.second->owner; countryB != nullptr)
 							{
 								Relation* relationAB = relations[countryA->ID][countryB->ID];
 								if (relationAB->isWar)
@@ -1529,11 +1575,11 @@ public:
 				}
 				else if (showmode == 6)
 				{
-					if (select_country != nullptr)
+					/*if (select_country != nullptr)
 					{
-						if (select_country->priority_rank[blockA->X][blockA->Y] > select_country->priority_rank[blockB->X][blockB->Y] || (
-							select_country->priority_rank[blockA->X][blockA->Y] == select_country->priority_rank[blockB->X][blockB->Y] &&
-							select_country->priority_power[blockA->X][blockA->Y] > select_country->priority_power[blockB->X][blockB->Y]
+						if (select_country->priority_rank[blockA->X][blockA->Y] > select_country->priority_rank[neighbor.second->X][neighbor.second->Y] || (
+							select_country->priority_rank[blockA->X][blockA->Y] == select_country->priority_rank[neighbor.second->X][neighbor.second->Y] &&
+							select_country->priority_power[blockA->X][blockA->Y] > select_country->priority_power[neighbor.second->X][neighbor.second->Y]
 							))
 						{
 							r = 255;
@@ -1543,16 +1589,17 @@ public:
 						}
 						if (blockA->owner == select_country)
 							r = 0;
-					}
+					}*/
 				}
 
 				if (a) {
-					if (showmode == 6)
-					{
-						Mat(con_img, blockA->big_border[i]) = Scalar(b, g, r, a);
-						line(con_img, Point((blockA->X + 0.5f) * block_size, (blockA->Y + 0.5f) * block_size), Point(((blockA->X + blockB->X) / 2 + 0.5f) * block_size, ((blockA->Y + blockB->Y) / 2 + 0.5f) * block_size), Scalar(b, g, r, a));
-					}
-					else Mat(con_img, blockA->big_border[i]) = Scalar(b, g, r, a);
+					//if (showmode == 6)
+					//{
+					//	//Mat(con_img, blockA->big_border[i]) = Scalar(b, g, r, a);
+					//	//line(con_img, Point((blockA->X + 0.5f) * block_size, (blockA->Y + 0.5f) * block_size), Point(((blockA->X + neighbor.second->X) / 2 + 0.5f) * block_size, ((blockA->Y + neighbor.second->Y) / 2 + 0.5f) * block_size), Scalar(b, g, r, a));
+					//}
+					//else
+					Mat(con_img, blockA->big_border[i]) = Scalar(b, g, r, a);
 				}
 				++i;
 			}

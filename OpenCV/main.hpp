@@ -155,6 +155,7 @@ struct Troop {
 	Country* owner;
 	int energy = 0;
 	int size = 100;
+	int forward = -1;
 };
 
 class Block {
@@ -162,7 +163,7 @@ public:
 	const int ID, X, Y;
 	Rect rect;
 	Geo geo;
-	vector<Block*> neighbor;
+	unordered_map<uint8_t, Block*> neighbor;
 	vector<Rect> small_border;
 	vector<Rect> big_border;
 
