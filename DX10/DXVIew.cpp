@@ -29,7 +29,6 @@ struct hr {
 	}
 } hr;
 
-
 struct DXView : View {
 	ComPtr<ID3DX10Font> font = nullptr;
 	ComPtr<ID3D10InputLayout> IL = nullptr;
@@ -51,7 +50,7 @@ struct DXView : View {
 	UINT RectOffset = 0;
 	UINT RectStride = sizeof(XMFLOAT2);
 
-	std::map<std::wstring, ComPtr<ID3D10ShaderResourceView>>  textures = {};
+	std::map<std::wstring, ComPtr<ID3D10ShaderResourceView>> textures = {};
 
 	ID3D10ShaderResourceView* GetImage(std::wstring path) {
 		if (textures.find(path) == textures.end())
@@ -61,12 +60,10 @@ struct DXView : View {
 
 	void DrawImage(std::wstring path, XMFLOAT2 pos, XMFLOAT2 size) override;
 	void DrawRect(XMFLOAT2 pos, XMFLOAT2 size) override;
+	void DrawStr(XMFLOAT2 pos, std::string text) override;
 	void ClearDepth() override;
-
-
 } *X = nullptr;
 View* V = nullptr;
-
 
 LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void* pUserContext)
 {
@@ -80,7 +77,6 @@ HRESULT CALLBACK OnD3D10CreateDevice(ID3D10Device* D, const DXGI_SURFACE_DESC* p
 	X->D = D;
 	V = X;
 	if (V != X) throw;
-	hr << D3DX10CreateFont(D, 15, 0, FW_BOLD, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Arial", X->font.GetAddressOf());
 	hr << D3DX10CreateSprite(D, 512, X->sprite.GetAddressOf());
 
 	DWORD dwShaderFlags = 0;
@@ -121,7 +117,6 @@ HRESULT CALLBACK OnD3D10CreateDevice(ID3D10Device* D, const DXGI_SURFACE_DESC* p
 	BlendState.SrcBlendAlpha = D3D10_BLEND_ZERO;
 	BlendState.DestBlendAlpha = D3D10_BLEND_ZERO;
 	hr << D->CreateBlendState(&BlendState, X->BS.GetAddressOf());
-
 
 	D3D10_RASTERIZER_DESC RSDesc = {};
 	RSDesc.FillMode = D3D10_FILL_SOLID;
@@ -185,7 +180,7 @@ HRESULT CALLBACK OnD3D10CreateDevice(ID3D10Device* D, const DXGI_SURFACE_DESC* p
 		hr << D->CreateSamplerState(&desc, X->SS.GetAddressOf());
 	}
 	{
-		D3DX10CreateFontA(D, 30, 0, 1, 0, FALSE, DEFAULT_CHARSET,PRECISION);
+		hr << D3DX10CreateFontA(D, 50, 0, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Consolas", X->font.GetAddressOf());
 	}
 	return S_OK;
 }
@@ -200,9 +195,15 @@ void CALLBACK OnFrameMove(double fTime, float fElapsedTime, void* pUserContext)
 	X->DT = fElapsedTime;
 	X->T = fTime;
 	main_step();
-
 }
 
+void DXView::DrawStr(XMFLOAT2 pos, std::string text) {
+	RECT rect{};
+	rect.left = pos.x;
+	rect.top = pos.y;
+	X->font->DrawTextA(nullptr, text.data(), -1, &rect, DT_NOCLIP, D3DXCOLOR(X->color.x, X->color.y, X->color.z, X->color.w));
+	X->color = X->default_color;
+}
 
 void DXView::DrawImage(std::wstring path, XMFLOAT2 pos, XMFLOAT2 size) {
 	X->D->VSSetShader(X->VS.Get());
@@ -237,7 +238,6 @@ void DXView::DrawImage(std::wstring path, XMFLOAT2 pos, XMFLOAT2 size) {
 
 	X->D->Draw(6, 0);
 	X->color = X->default_color;
-
 }
 
 void DXView::DrawRect(XMFLOAT2 pos, XMFLOAT2 size)
@@ -265,7 +265,6 @@ void CALLBACK OnD3D10DestroyDevice(void* pUserContext)
 	V = nullptr;
 }
 
-
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 #if defined(DEBUG) | defined(_DEBUG)
@@ -274,7 +273,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	DXUTSetCallbackMsgProc(MsgProc);
 	DXUTSetCallbackFrameMove(OnFrameMove);
-
 
 	DXUTSetCallbackD3D10DeviceCreated(OnD3D10CreateDevice);
 	DXUTSetCallbackD3D10SwapChainResized(OnD3D10ResizedSwapChain);

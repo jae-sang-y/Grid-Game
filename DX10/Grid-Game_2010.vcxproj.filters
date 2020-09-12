@@ -83,9 +83,16 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
     <ClInclude Include="GameData.h" />
+    <ClInclude Include="GameData\Block.hpp" />
+    <ClInclude Include="GameData\Nation.hpp" />
+    <ClInclude Include="GameData\Army.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXVIew.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="GameData\Nation.cpp" />
+    <ClCompile Include="GameData\Block.cpp" />
+    <ClCompile Include="GameData\Army.cpp" />
+    <ClCompile Include="GameData.cpp" />
   </ItemGroup>
 </Project>
