@@ -17,7 +17,7 @@
 typedef std::wstring String;
 const String MAP_PATH = L"res/map.bmp";
 constexpr size_t MAP_W = 80;
-constexpr size_t MAP_H = 50;
+constexpr size_t MAP_H = 60;
 
 using namespace DirectX;
 
@@ -31,7 +31,8 @@ constexpr static int MAN_LEVEL_MAX = 1000000;
 constexpr static int ROAD_LEVEL_MIN = 1;
 constexpr static int ROAD_LEVEL_MAX = 63;
 
-constexpr static float SPOIL_PROPORTION = 1 / 3.f;
+constexpr static int ARMY_MAN_COST = 300;
+constexpr static float SPOIL_PROPORTION = 0.5f;
 
 constexpr static int MAX_NATION_COUNT = 80;
 constexpr static float MAN_CONSUME_PER_MAN = 1 / 180.f;
@@ -114,7 +115,7 @@ inline void SetGeoInfo() {
 	{
 		geo_descs[Geo::River].color = { 232, 162,   0 };
 		geo_descs[Geo::River].farm_level = 0;
-		geo_descs[Geo::River].SetMhoByHalftime(50);
+		geo_descs[Geo::River].SetMhoByHalftime(100);
 		geo_descs[Geo::River].livable = false;
 		geo_descs[Geo::River].passable = true;
 	}
@@ -142,14 +143,14 @@ inline void SetGeoInfo() {
 	{
 		geo_descs[Geo::DeepOcean].color = { 204,  72,  63 };
 		geo_descs[Geo::DeepOcean].farm_level = 0;
-		geo_descs[Geo::DeepOcean].SetMhoByHalftime(50);
+		geo_descs[Geo::DeepOcean].SetMhoByHalftime(10);
 		geo_descs[Geo::DeepOcean].livable = false;
 		geo_descs[Geo::DeepOcean].passable = true;
 	}
 	{
 		geo_descs[Geo::MediumOcean].color = { 190, 146, 112 };
 		geo_descs[Geo::MediumOcean].farm_level = 0;
-		geo_descs[Geo::MediumOcean].SetMhoByHalftime(100);
+		geo_descs[Geo::MediumOcean].SetMhoByHalftime(50);
 		geo_descs[Geo::MediumOcean].livable = false;
 		geo_descs[Geo::MediumOcean].passable = true;
 	}
@@ -243,6 +244,27 @@ inline float IntoRange(float var, float min, float max)
 {
 	return (var - min) / (max - min);
 }
+
+template <typename T>
+struct GetSet {
+	T data = nullptr;
+	const T get() {
+		return data;
+	}
+	virtual const T set(T new_data) {
+		return data = new_data;
+	}
+
+	template <typename T>
+	bool operator == (T other) {
+		return data == other;
+	}
+
+	template <typename T>
+	bool operator != (T other) {
+		return data != other;
+	}
+};
 
 struct Block;
 struct Army;

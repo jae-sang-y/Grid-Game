@@ -74,7 +74,7 @@ void Block::OnPropaganda(Block* other) {
 	if (multiply_by_demand < 1.f && other->multiply_by_demand > multiply_by_demand && man_level.data() > 0 && other->geo_desc->livable) {
 		other->man_level += 1;
 		this->man_level -= 1;
-		if (man_level.data() > 0 && this->owner != nullptr && other->owner == nullptr) {
+		if (man_level.data() > 0 && this->owner != nullptr && other->owner == nullptr  && !this->owner->on_war && other->army == nullptr) {
 			this->owner->TakeBlock(other);
 		}
 	}
@@ -140,7 +140,7 @@ void Block::OnStep() {
 		}
 		if (farm_growth > 0) {
 			{
-				float food_amount = std::min({ farm_growth.data(), (float)farm_level.data(), GetAvailableSpace() });
+				float food_amount = std::min({ farm_growth.data(), (float)farm_level.data(), GetAvailableSpace() / (1 + farm_level.data()) });
 				food += food_amount;
 				farm_growth -= food_amount;
 			}
@@ -168,6 +168,15 @@ void Block::OnStep() {
 		else {
 			road_growth -= road_growth_decay;
 		}
+	}
+
+	if (man_level.data() == 0 && owner != nullptr) {
+		if (owner->capital.get() == self) {
+			Nation* former_owner = owner;
+			owner = nullptr;
+			former_owner->LostCapital();
+		}
+		owner = nullptr;
 	}
 
 	if (army != nullptr) army->Step();

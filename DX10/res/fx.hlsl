@@ -28,7 +28,6 @@ VS_OUTPUT VS( in float2 vPosition : POSITION )
     return Output;
 }
 
-
 float4 PS(VS_OUTPUT input) : SV_Target
 {
 	return pow(t0.Sample(s0, input.tex) * Diffuse, 2.25f);

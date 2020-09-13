@@ -3,31 +3,51 @@
 #include "Block.hpp"
 #include "Nation.hpp"
 
-Army::Army(Nation* owner, Block* target) : owner(owner), ground(target) {
+Army::Army(Nation* owner, Block* target) : belong(owner), ground(target) {
 	tassert(CanMove(target));
 	target->army = this;
 }
 
 void Army::Step() {
-	if (energy < 15) energy += 10;
+	if (died) return;
+	tassert(ground != nullptr && belong != nullptr);
+	if (isDying()) {
+		Die();
+		return;
+	}
+	if (ground->owner != belong) {
+		if (belong->HasWarWith(ground->owner)) {
+			belong->TakeBlock(ground);
+			belong->SpoilBlock(ground);
+		}
+	}
+
+	if (energy < 15) {
+		energy += 10;
+	}
 	else {
 		Block* target = nullptr;
-		BlockPropaganda target_prop = owner->strategy_map[ground->X][ground->Y].prop;
+		BlockPropaganda target_prop = belong->strategy_map[ground->X][ground->Y].prop;
+		//if (!owner->strategy_map[ground->X][ground->Y].passable) 
+			target_prop = { ground->ID, 0, 0 };
 		for (auto& neighbor : ground->neighbors) {
-			if (owner->strategy_map[neighbor.second->X][neighbor.second->Y].prop > target_prop) {
+			auto neighbor_sblock = belong->strategy_map[neighbor.second->X][neighbor.second->Y];
+			if (neighbor_sblock.prop > target_prop && (CanMove(neighbor.second) || CanAttack(neighbor.second))) {
 				target = neighbor.second;
-				target_prop = owner->strategy_map[neighbor.second->X][neighbor.second->Y].prop;
+				target_prop << neighbor_sblock.prop;
 			}
 		}
 		if (target != nullptr) {
-			if (CanAttack(target)) Attack(target);
-			else if (CanMove(target)) Move(target);
+			if (target->army != nullptr) {
+				if (target->army->belong != belong) Attack(target);
+			}
+			else Move(target);
 		}
 	}
 }
 
 bool Army::CanMove(Block* target) {
-	return target->army == nullptr && target->geo_desc->passable;
+	return target != nullptr && target->army == nullptr && target->geo_desc->passable;
 }
 
 void Army::Move(Block* target) {
@@ -35,10 +55,12 @@ void Army::Move(Block* target) {
 	ground->army = nullptr;
 	target->army = this;
 	ground = target;
-	if (ground->owner != nullptr && ground->owner != owner) {
-		if (owner->relats.find(owner) != owner->relats.end()) {
-			if (owner->relats.at(owner)->is_war) {
-				owner->TakeBlock(ground);
+	if (ground->owner != nullptr && ground->owner != belong) {
+		if (belong->relats.find(ground->owner) != belong->relats.end()) {
+			if (belong->relats.at(ground->owner)->is_war) {
+				belong->TakeBlock(ground);
+				belong->SpoilBlock(ground);
+				//ground->man_level = 0;
 			}
 		}
 	}
@@ -46,19 +68,17 @@ void Army::Move(Block* target) {
 }
 
 bool Army::CanAttack(Block* target) {
-	if (target->army != nullptr && target->army->owner != this->owner && target->geo_desc->passable) {
-		auto relat_itr = this->owner->relats.find(target->army->owner);
-		if (relat_itr != this->owner->relats.end()) {
-			return (*relat_itr).second->is_war;
-		}
-	}
-	return false;
+	if (target == nullptr) return false;
+	if(target->army == nullptr) return false;
+	if(!target->geo_desc->passable) return false;
+	if (!this->belong->HasWarWith(target->army->belong)) return false;
+	return true;	
 }
 
 void Army::Attack(Block* target) {
-	tassert(CanAttack(target) && energy >= 15);
-	target->army->size -= ceilf(this->size / 10.f);
-	this->size -= ceilf(target->army->size / 10.f);
+	tassert(CanAttack(target));
+	target->army->size -= std::min({ (int)ceilf(this->size.data() / 2.f), target->army->size.data() });
+	this->size -= std::min({ (int)ceilf(target->army->size.data() / 2.f), this->size.data() });
 
 	if (target->army->isDying()) target->army->Die();
 	if (isDying()) Die();
@@ -68,11 +88,14 @@ void Army::Attack(Block* target) {
 }
 
 bool Army::isDying() {
-	return this->size <= 0;
+	return this->size.data() <= 0;
 }
 
 void Army::Die() {
-	this->ground->owner = nullptr;
-	this->owner->army_size -= 1;
-	delete this;
+	if (!died) {
+		this->ground->army = nullptr;
+		this->ground = nullptr;
+		this->belong->army_size -= 1;
+		died = true;
+	}
 }

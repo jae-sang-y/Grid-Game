@@ -13,7 +13,7 @@
 enum class MapLens {
 	Politic,
 	Farm, Building, Man,
-	Food, Product, Road
+	Food, Product, Road, Strategymap
 };
 
 bool operator == (XMINT3 a, XMINT3 b) {
@@ -34,6 +34,31 @@ public:
 	inline bool isOnBoard(const int& x, const int& y)
 	{
 		return x >= 0 && x < MAP_W&& y >= 0 && y < MAP_H;
+	}
+
+	void RebornNation() {
+		for (auto& nation : nation_list) {
+			if (!nation->notFall) {
+				int x = rand() % MAP_W;
+				int y = rand() % MAP_H;
+				if (auto& block = board[x][y]; block.owner == nullptr && geo_descs[block.geo].livable && block.army == nullptr)
+				{
+					block.owner = nation;
+					nation->capital.set(&block);
+					nation->nation_size = 1;
+
+					block.man_level = rand() % 100 + 1;
+					block.road_level = 1;
+					block.road_growth = 0.5f;
+					block.building_level = 1;
+					block.food = (float)block.man_level.data();
+					block.product = (float)block.man_level.data();
+
+					nation->notFall = true;
+					break;
+				}
+			}
+		}
 	}
 
 	void SpreadNation() {
@@ -59,12 +84,12 @@ public:
 					nations[k] = Nation(color);
 					nation_list.push_back(&nations[k]);
 					auto& nation = (*nation_list.rbegin());
-					nation->capital = &block;
+					nation->capital.set(&block);
 					nation->nation_size = 1;
-					nations[k].self = nation;
+					nations[k].SetSelf(nation);
 
 					block.owner = nation;
-					block.man_level = rand() % 100;
+					block.man_level = rand() % 100 + 1;
 					block.road_level = 1;
 					block.road_growth = 0.5f;
 					block.building_level = 1;
@@ -86,6 +111,7 @@ public:
 			{
 				board[x][y] = Block(x, y);
 				Block& block = board[x][y];
+				board[x][y].self = &block;
 
 				for (auto forward : forward_dir)
 				{
@@ -234,8 +260,8 @@ public:
 	}
 
 	void StageUpdateInfo() {
+		RebornNation();
 		for (auto& block : AllBlocks()) if (block->geo_desc->passable) block->OnUpdateInfo();
-
 		for (auto& nation : nation_list) nation->ClearStat();
 	}
 
@@ -255,8 +281,20 @@ public:
 				if (owner->capital == block) V->DrawImage(L"res/star.png", block->base_rect.pos, block->base_rect.size);
 			}
 			if (Army* army = block->army; army != nullptr) {
-				V->color = army->owner->color;
-				V->DrawImage(L"res/circle.png", block->base_rect.pos, block->base_rect.size);
+				V->color = army->belong->color;
+				std::wstring image = L"res/circle_0.png";
+				for (int k = 1; k <= 10; ++k) {
+					if (army->size.data() > k * 10) {
+						image = L"res/circle_" + std::to_wstring(k) + L".png";
+					}
+				}
+				if (army->size.data() <= 0) {
+					image = L"res/circle.png";
+				}
+				V->DrawImage(image.c_str(), block->base_rect.pos, block->base_rect.size);
+				if (army->energy > 15) {
+					V->DrawImage(L"res/circle_fort.png", block->base_rect.pos, block->base_rect.size);
+				}
 			}
 		}
 	}
@@ -320,13 +358,12 @@ public:
 			for (auto& block : AllBlocks()) for (auto& neighbor : block->neighbors) {
 				DrawNaturalBorder(block, neighbor);
 				if (block->owner != neighbor.second->owner) {
-					auto& bold_border = block->bold_border.at(neighbor.first);
+					auto& thin_border = block->thin_border.at(neighbor.first);
 					V->color = { 0, 0, 0, 1 };
-					if (block->owner != nullptr && block->owner->relats.find(neighbor.second->owner) != block->owner->relats.end()) {
-						if (block->owner->relats.at(neighbor.second->owner)->is_war)
-							V->color = { 1, 0, 0, 1 };
+					if (block->owner != nullptr && block->owner->HasWarWith(neighbor.second->owner)) {
+						V->color = { 1, 0, 0, 1 };
 					}
-					V->DrawRect(bold_border.pos, bold_border.size);
+					V->DrawRect(thin_border.pos, thin_border.size);
 				}
 			}
 			V->DrawStr({ 30, 30 }, "Politic");
@@ -397,7 +434,47 @@ public:
 			}
 			V->DrawStr({ 30, 30 }, "Road");
 		}
+		else if (map_lens == MapLens::Strategymap) {
+			//MapLensPolitic();
+			for (auto& block : AllBlocks()) for (auto& neighbor : block->neighbors) {
+				DrawNaturalBorder(block, neighbor);
+				if (block->owner != neighbor.second->owner && block->owner != nullptr) {
+					auto& thin_border = block->thin_border.at(neighbor.first);
+					V->color = block->owner->color;
+					V->DrawRect(thin_border.pos, thin_border.size);
+				}
+			}
+			V->DrawStr({ 30, 30 }, "Strategymap");
+			if (selected_nation != nullptr) {
+				for (const auto& block : AllBlocks()) {
+					for (auto& neighbor : block->neighbors) {
+						if (selected_nation->strategy_map[block->X][block->Y].prop.origin != selected_nation->strategy_map[neighbor.second->X][neighbor.second->Y].prop.origin) {
+							auto& bold_border = block->bold_border.at(neighbor.first);
+							V->color = { 0, 0, 0, 1 };
+							V->DrawRect(bold_border.pos, bold_border.size);
+						}
+					}
+					if (block->geo_desc->passable && selected_nation->strategy_map[block->X][block->Y].prop.origin == block->ID) V->DrawImage(L"res/star.png", block->base_rect.pos, block->base_rect.size);
+					if (!selected_nation->strategy_map[block->X][block->Y].passable) {
+						V->color = { 1, 0, 1, 0.75f };
+						V->DrawRect(block->base_rect.pos, block->base_rect.size);
+					}
+				}
+			}
+		}
+
+		//auto& p = V->GetMousePos();
+		//V->DrawRect(p, { 32, 32 });
 	};
+
+	void mousedown() {
+		auto mouse = V->GetMousePos();
+		int bx = mouse.x / block_w;
+		int by = mouse.y / block_h;
+		if (isOnBoard(bx, by)) {
+			selected_nation = board[bx][by].owner;
+		}
+	}
 
 	void keyboard(int key)
 	{
@@ -426,6 +503,9 @@ public:
 			break;
 		case '6':
 			map_lens = MapLens::Road;
+			break;
+		case '7':
+			map_lens = MapLens::Strategymap;
 			break;
 		}
 	}
@@ -460,5 +540,8 @@ void main_end() {
 void main_msg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	if (uMsg == WM_KEYDOWN) {
 		game.keyboard(wParam);
+	}
+	else if (uMsg == WM_LBUTTONDOWN) {
+		game.mousedown();
 	}
 }

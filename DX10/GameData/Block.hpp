@@ -30,8 +30,10 @@ struct Block {
 	BlockPropaganda build_info = { ID, 0, 0 };
 	BlockPropaganda man_info = { ID, 0, 0 };
 
-	size_t ID = -1, X = -1, Y = -1;
+	int ID = -1;
+	size_t X = -1, Y = -1;
 
+	Block* self = nullptr;
 	Nation* owner = nullptr;
 	Army* army = nullptr;
 

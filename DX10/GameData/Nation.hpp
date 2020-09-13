@@ -11,10 +11,19 @@ struct StrategyBlock {
 
 struct Nation
 {
-	Nation* self = nullptr;
 	int ID = -1;
 	XMFLOAT4 color = {};
-	Block* capital = nullptr;
+
+	struct Capital : GetSet<Block*> {
+		Block* const set(Block* new_data) override {
+			tassert(new_data != nullptr);
+			tassert(new_data->owner == handler);
+			return data = new_data;
+		}
+		Nation* handler = nullptr;
+	};
+	
+	Capital capital{};
 
 	float score = 0;
 	int army_size = 0;
@@ -29,6 +38,9 @@ struct Nation
 		Nation* const owner;
 
 		Relation(Nation* owner, Nation* target) : owner(owner), target(target) {}
+		Relation() = delete;
+		Relation(Relation&) = delete;
+		Relation(Relation&&) = delete;
 	};
 	std::map<Nation*, Relation*> relats{};
 
@@ -43,7 +55,10 @@ struct Nation
 	void ClearStat();
 	void OnBlockPropaganda(Block* blockA, Block* blockB);
 	void Step();
+	void LostCapital();
 	void TakeBlock(Block* target);
+	void SpoilBlock(Block* target);
+	bool HasWarWith(Nation* target);
 
 	Nation* Nation::nation(int target);
 	~Nation() {
@@ -51,4 +66,12 @@ struct Nation
 	}
 	void Nation::Fall();
 	StrategyBlock strategy_map[MAP_W][MAP_H] = {};
+
+	void SetSelf(Nation* self) {
+		this->self = self;
+		capital.handler = self;
+	}
+
+private:
+	Nation* self = nullptr;
 };

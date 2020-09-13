@@ -10,9 +10,11 @@ struct Army {
 	bool isDying();
 	void Die();
 
+	bool died = false;
+
 	Block* ground;
-	Nation* owner;
+	Nation* belong;
 	int energy = 0;
-	int size = 100;
+	Range<int> size = { 100, 0, 100 };
 	Forward forward = Forward::None;
 };

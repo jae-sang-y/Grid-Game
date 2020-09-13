@@ -6,8 +6,6 @@ using namespace DirectX;
 
 constexpr int virtual_W = 1440;
 constexpr int virtual_H = 1080;
-static float to_real_Pw = 1.f;
-static float to_real_Ph = 1.f;
 
 struct View {
 	const XMFLOAT4 default_color = XMFLOAT4( 1, 1, 1, 1 );
@@ -16,6 +14,7 @@ struct View {
 	virtual void DrawRect(XMFLOAT2 pos, XMFLOAT2 size) {};
 	virtual void DrawStr(XMFLOAT2 pos, std::string text) {};
 	virtual void ClearDepth() {};
+	virtual XMFLOAT2 GetMousePos()  = 0;
 
 	float DT = 0.f;
 	float T = 0.f;

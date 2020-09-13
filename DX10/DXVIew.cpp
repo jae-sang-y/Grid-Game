@@ -49,6 +49,8 @@ struct DXView : View {
 	ID3D10Device* D = nullptr;
 	UINT RectOffset = 0;
 	UINT RectStride = sizeof(XMFLOAT2);
+	float to_real_Pw = 1.f;
+	float to_real_Ph = 1.f;
 
 	std::map<std::wstring, ComPtr<ID3D10ShaderResourceView>> textures = {};
 
@@ -62,6 +64,7 @@ struct DXView : View {
 	void DrawRect(XMFLOAT2 pos, XMFLOAT2 size) override;
 	void DrawStr(XMFLOAT2 pos, std::string text) override;
 	void ClearDepth() override;
+	XMFLOAT2 GetMousePos() override;
 } *X = nullptr;
 View* V = nullptr;
 
@@ -187,6 +190,8 @@ HRESULT CALLBACK OnD3D10CreateDevice(ID3D10Device* D, const DXGI_SURFACE_DESC* p
 
 HRESULT CALLBACK OnD3D10ResizedSwapChain(ID3D10Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext)
 {
+	X->to_real_Pw = (float)virtual_W / pBackBufferSurfaceDesc->Width;
+	X->to_real_Ph = (float)virtual_H / pBackBufferSurfaceDesc->Height;
 	return S_OK;
 }
 
@@ -247,6 +252,16 @@ void DXView::DrawRect(XMFLOAT2 pos, XMFLOAT2 size)
 
 void DXView::ClearDepth() {
 	D->ClearDepthStencilView(DXUTGetD3D10DepthStencilView(), D3D10_CLEAR_DEPTH, 1.f, 0);
+}
+
+XMFLOAT2 DXView::GetMousePos() {
+	POINT p;
+	GetCursorPos(&p);
+	ScreenToClient(DXUTGetHWND(), &p);
+	return XMFLOAT2(
+		roundf(p.x * to_real_Pw),
+		roundf(p.y * to_real_Ph)
+	);
 }
 
 void CALLBACK OnD3D10FrameRender(ID3D10Device* D, double fTime, float fElapsedTime, void* pUserContext)
