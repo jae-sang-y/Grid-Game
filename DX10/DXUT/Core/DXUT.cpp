@@ -3,6 +3,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
+#pragma warning(push, 0)
 #include "DXUT.h"
 #define DXUT_MIN_WINDOW_SIZE_X 200
 #define DXUT_MIN_WINDOW_SIZE_Y 200
@@ -6181,8 +6182,8 @@ void DXUTUpdateFrameStats()
 //--------------------------------------------------------------------------------------
 LPCWSTR WINAPI DXUTGetFrameStats( bool bShowFPS )
 {
-    WCHAR* pstrFrameStats = GetDXUTState().GetFrameStats();
-    WCHAR* pstrFPS = ( bShowFPS ) ? GetDXUTState().GetFPSStats() : L"";
+    wchar_t* pstrFrameStats = GetDXUTState().GetFrameStats();
+    const wchar_t* pstrFPS = ( bShowFPS ) ? GetDXUTState().GetFPSStats() : L"";
     swprintf_s( pstrFrameStats, 256, GetDXUTState().GetStaticFrameStats(), pstrFPS );
     return pstrFrameStats;
 }
@@ -6485,3 +6486,4 @@ void WINAPI DXUTSetIsInGammaCorrectMode( bool bGammaCorrect )
     GetDXUTState().SetIsInGammaCorrectMode( bGammaCorrect );
 }
 
+#pragma warning(pop)

@@ -1,20 +1,30 @@
 #pragma once
-#include "../GameData.h"
-struct Army {
+
+class Army {
+public:
 	Army(Nation* owner, Block* target);
 	void Step();
-	bool CanMove(Block* target);
+	const bool CanMove(const Block* target);
 	void Move(Block* target);
-	bool CanAttack(Block* target);
+	const bool CanAttack(const Block* target);
 	void Attack(Block* target);
-	bool isDying();
+	const bool isDying();
 	void Die();
 
-	bool died = false;
+	const bool is_belongs(const Nation* nation) { return this->belong == nation; };
+	Nation* get_belong() { return this->belong; };
+	const int get_size() { return this->size.data(); };
+	const bool is_died() { return this->died; };
+	const int get_energy() { return this->energy; }
 
+	bool moved = true;
+	Range<int> size = { 100, 0, 100 };
+private:
+	bool died = false;
+	
 	Block* ground;
 	Nation* belong;
 	int energy = 0;
-	Range<int> size = { 100, 0, 100 };
 	Forward forward = Forward::None;
+	int decremnt_time = 0;
 };

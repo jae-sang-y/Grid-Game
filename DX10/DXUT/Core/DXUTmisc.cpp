@@ -208,7 +208,7 @@ void CDXUTTimer::LimitThreadAffinityToCurrentProc()
 //--------------------------------------------------------------------------------------
 LPCWSTR WINAPI DXUTD3DFormatToString( D3DFORMAT format, bool bWithPrefix )
 {
-    WCHAR* pstr = NULL;
+    std::wstring pstr;
     switch( format )
     {
         case D3DFMT_UNKNOWN:
@@ -326,10 +326,10 @@ LPCWSTR WINAPI DXUTD3DFormatToString( D3DFORMAT format, bool bWithPrefix )
         default:
             pstr = L"Unknown format"; break;
     }
-    if( bWithPrefix || wcsstr( pstr, L"D3DFMT_" ) == NULL )
-        return pstr;
+    if( bWithPrefix || wcsstr( pstr.c_str(), L"D3DFMT_") == NULL)
+        return pstr.c_str();
     else
-        return pstr + lstrlen( L"D3DFMT_" );
+        return (pstr +  L"D3DFMT_").c_str();
 }
 
 
@@ -338,7 +338,7 @@ LPCWSTR WINAPI DXUTD3DFormatToString( D3DFORMAT format, bool bWithPrefix )
 //--------------------------------------------------------------------------------------
 LPCWSTR WINAPI DXUTDXGIFormatToString( DXGI_FORMAT format, bool bWithPrefix )
 {
-    WCHAR* pstr = NULL;
+    std::wstring pstr{};
     switch( format )
     {
         case DXGI_FORMAT_R32G32B32A32_TYPELESS:
@@ -518,10 +518,10 @@ LPCWSTR WINAPI DXUTDXGIFormatToString( DXGI_FORMAT format, bool bWithPrefix )
         default:
             pstr = L"Unknown format"; break;
     }
-    if( bWithPrefix || wcsstr( pstr, L"DXGI_FORMAT_" ) == NULL )
-        return pstr;
+    if( bWithPrefix || wcsstr( pstr.c_str(), L"DXGI_FORMAT_") == NULL)
+        return pstr.c_str();
     else
-        return pstr + lstrlen( L"DXGI_FORMAT_" );
+        return (pstr + L"DXGI_FORMAT_" ).c_str();
 }
 
 
@@ -910,7 +910,7 @@ void WINAPI DXUTTraceDecl( D3DVERTEXELEMENT9 decl[MAX_FVF_DECL_SIZE] )
 #define TRACE_ID(iD) case iD: return L#iD;
 
 //--------------------------------------------------------------------------------------
-WCHAR* WINAPI DXUTTraceWindowsMessage( UINT uMsg )
+const WCHAR* WINAPI DXUTTraceWindowsMessage( UINT uMsg )
 {
     switch( uMsg )
     {
@@ -1135,7 +1135,7 @@ WCHAR* WINAPI DXUTTraceWindowsMessage( UINT uMsg )
 
 
 //--------------------------------------------------------------------------------------
-WCHAR* WINAPI DXUTTraceD3DDECLTYPEtoString( BYTE t )
+const WCHAR* WINAPI DXUTTraceD3DDECLTYPEtoString( BYTE t )
 {
     switch( t )
     {
@@ -1180,7 +1180,7 @@ WCHAR* WINAPI DXUTTraceD3DDECLTYPEtoString( BYTE t )
     }
 }
 
-WCHAR* WINAPI DXUTTraceD3DDECLMETHODtoString( BYTE m )
+const WCHAR* WINAPI DXUTTraceD3DDECLMETHODtoString( BYTE m )
 {
     switch( m )
     {
@@ -1203,7 +1203,7 @@ WCHAR* WINAPI DXUTTraceD3DDECLMETHODtoString( BYTE m )
     }
 }
 
-WCHAR* WINAPI DXUTTraceD3DDECLUSAGEtoString( BYTE u )
+const WCHAR* WINAPI DXUTTraceD3DDECLUSAGEtoString( BYTE u )
 {
     switch( u )
     {

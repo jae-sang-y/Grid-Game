@@ -12,27 +12,21 @@
       <UniqueIdentifier>{2c3d4c8c-5d1a-459a-a05a-a4e4b608a44e}</UniqueIdentifier>
       <Extensions>fx;fxh;hlsl</Extensions>
     </Filter>
+    <Filter Include="GameData">
+      <UniqueIdentifier>{7492fb7a-e945-414a-ad27-dc0618a55782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{66154b00-3071-464e-bb0b-5060d427f4b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="DXUT\Optional\directx.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <ClInclude Include="DXUT\Core\DXUT.h">
-      <Filter>DXUT</Filter>
-    </ClInclude>
-    <ClInclude Include="DXUT\Core\DXUTenum.h">
-      <Filter>DXUT</Filter>
-    </ClInclude>
-    <ClInclude Include="DXUT\Core\DXUTmisc.h">
-      <Filter>DXUT</Filter>
-    </ClInclude>
     <ClCompile Include="DXUT\Core\DXUT.cpp">
       <Filter>DXUT</Filter>
     </ClCompile>
     <ClCompile Include="DXUT\Core\DXUTenum.cpp">
-      <Filter>DXUT</Filter>
-    </ClCompile>
-    <ClCompile Include="DXUT\Core\DXUTmisc.cpp">
       <Filter>DXUT</Filter>
     </ClCompile>
     <ClInclude Include="DXUT\Optional\DXUTcamera.h">
@@ -47,12 +41,6 @@
     <ClInclude Include="DXUT\Optional\DXUTsettingsdlg.h">
       <Filter>DXUT</Filter>
     </ClInclude>
-    <ClInclude Include="DXUT\Optional\SDKmesh.h">
-      <Filter>DXUT</Filter>
-    </ClInclude>
-    <ClInclude Include="DXUT\Optional\SDKmisc.h">
-      <Filter>DXUT</Filter>
-    </ClInclude>
     <ClCompile Include="DXUT\Optional\DXUTcamera.cpp">
       <Filter>DXUT</Filter>
     </ClCompile>
@@ -63,12 +51,6 @@
       <Filter>DXUT</Filter>
     </ClCompile>
     <ClCompile Include="DXUT\Optional\DXUTsettingsdlg.cpp">
-      <Filter>DXUT</Filter>
-    </ClCompile>
-    <ClCompile Include="DXUT\Optional\SDKmesh.cpp">
-      <Filter>DXUT</Filter>
-    </ClCompile>
-    <ClCompile Include="DXUT\Optional\SDKmisc.cpp">
       <Filter>DXUT</Filter>
     </ClCompile>
     <None Include="res\fx.hlsl">
@@ -82,17 +64,36 @@
     <ResourceCompile Include="HLSLWithoutFX.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-    <ClInclude Include="GameData.h" />
-    <ClInclude Include="GameData\Block.hpp" />
-    <ClInclude Include="GameData\Nation.hpp" />
-    <ClInclude Include="GameData\Army.hpp" />
+    <ClInclude Include="GameData\Block.hpp">
+      <Filter>GameData</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData\Army.hpp">
+      <Filter>GameData</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData\Nation.hpp">
+      <Filter>GameData</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData\GameConst.hpp">
+      <Filter>GameData</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData\GameData.hpp">
+      <Filter>GameData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXVIew.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="GameData\Nation.cpp" />
-    <ClCompile Include="GameData\Block.cpp" />
-    <ClCompile Include="GameData\Army.cpp" />
-    <ClCompile Include="GameData.cpp" />
+    <ClCompile Include="main_program.cpp" />
+    <ClCompile Include="DXUT\Core\DXUTmisc.cpp">
+      <Filter>DXUT</Filter>
+    </ClCompile>
+    <ClCompile Include="GameData\Block.cpp">
+      <Filter>GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="GameData\Army.cpp">
+      <Filter>GameData</Filter>
+    </ClCompile>
+    <ClCompile Include="GameData\Nation.cpp">
+      <Filter>GameData</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

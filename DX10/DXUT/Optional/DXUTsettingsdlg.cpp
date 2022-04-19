@@ -15,12 +15,12 @@
 //--------------------------------------------------------------------------------------
 // Internal functions forward declarations
 //--------------------------------------------------------------------------------------
-WCHAR*              DXUTAPIVersionToString( DXUTDeviceVersion version );
-WCHAR*              DXUTPresentIntervalToString( UINT pi );
-WCHAR*              DXUTMultisampleTypeToString( D3DMULTISAMPLE_TYPE MultiSampleType );
-WCHAR*              DXUTD3DDeviceTypeToString( D3DDEVTYPE devType );
-WCHAR*              DXUTD3DX10DeviceTypeToString( D3D10_DRIVER_TYPE devType );
-WCHAR*              DXUTVertexProcessingTypeToString( DWORD vpt );
+const WCHAR*              DXUTAPIVersionToString( DXUTDeviceVersion version );
+const WCHAR*              DXUTPresentIntervalToString( UINT pi );
+const WCHAR*              DXUTMultisampleTypeToString( D3DMULTISAMPLE_TYPE MultiSampleType );
+const WCHAR*              DXUTD3DDeviceTypeToString( D3DDEVTYPE devType );
+const WCHAR*              DXUTD3DX10DeviceTypeToString( D3D10_DRIVER_TYPE devType );
+const WCHAR*              DXUTVertexProcessingTypeToString( DWORD vpt );
 
 
 //--------------------------------------------------------------------------------------
@@ -2612,7 +2612,7 @@ void CD3DSettingsDlg::UpdateModeChangeTimeoutText( int nSecRemaining )
 //--------------------------------------------------------------------------------------
 // Returns the string for the given DXUTDeviceVersion.
 //--------------------------------------------------------------------------------------
-WCHAR* DXUTAPIVersionToString( DXUTDeviceVersion version )
+const WCHAR* DXUTAPIVersionToString( DXUTDeviceVersion version )
 {
     switch( version )
     {
@@ -2629,7 +2629,7 @@ WCHAR* DXUTAPIVersionToString( DXUTDeviceVersion version )
 //--------------------------------------------------------------------------------------
 // Returns the string for the given D3DDEVTYPE.
 //--------------------------------------------------------------------------------------
-WCHAR* DXUTD3DDeviceTypeToString( D3DDEVTYPE devType )
+const WCHAR* DXUTD3DDeviceTypeToString( D3DDEVTYPE devType )
 {
     switch( devType )
     {
@@ -2648,7 +2648,7 @@ WCHAR* DXUTD3DDeviceTypeToString( D3DDEVTYPE devType )
 //--------------------------------------------------------------------------------------
 // Returns the string for the given D3DDEVTYPE.
 //--------------------------------------------------------------------------------------
-WCHAR* DXUTD3DX10DeviceTypeToString( D3D10_DRIVER_TYPE devType )
+const WCHAR* DXUTD3DX10DeviceTypeToString( D3D10_DRIVER_TYPE devType )
 {
     switch( devType )
     {
@@ -2669,7 +2669,7 @@ WCHAR* DXUTD3DX10DeviceTypeToString( D3D10_DRIVER_TYPE devType )
 //--------------------------------------------------------------------------------------
 // Returns the string for the given D3DMULTISAMPLE_TYPE.
 //--------------------------------------------------------------------------------------
-WCHAR* DXUTMultisampleTypeToString( D3DMULTISAMPLE_TYPE MultiSampleType )
+const WCHAR* DXUTMultisampleTypeToString( D3DMULTISAMPLE_TYPE MultiSampleType )
 {
     switch( MultiSampleType )
     {
@@ -2716,7 +2716,7 @@ WCHAR* DXUTMultisampleTypeToString( D3DMULTISAMPLE_TYPE MultiSampleType )
 //--------------------------------------------------------------------------------------
 // Returns the string for the given vertex processing type
 //--------------------------------------------------------------------------------------
-WCHAR* DXUTVertexProcessingTypeToString( DWORD vpt )
+const WCHAR* DXUTVertexProcessingTypeToString( DWORD vpt )
 {
     switch( vpt )
     {
@@ -2737,7 +2737,7 @@ WCHAR* DXUTVertexProcessingTypeToString( DWORD vpt )
 //--------------------------------------------------------------------------------------
 // Returns the string for the given present interval.
 //--------------------------------------------------------------------------------------
-WCHAR* DXUTPresentIntervalToString( UINT pi )
+const WCHAR* DXUTPresentIntervalToString( UINT pi )
 {
     switch( pi )
     {

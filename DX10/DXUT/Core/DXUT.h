@@ -343,4 +343,6 @@ void      WINAPI DXUTDestroyState(); // Optional method to destroy DXUT's memory
 #include <string>
 #include <DirectXMath.h>
 #include <wrl/client.h>
+
+#include "../../GameData/GameData.hpp"
 #endif

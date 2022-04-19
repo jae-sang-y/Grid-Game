@@ -60,9 +60,9 @@ struct DXView : View {
 		return textures.at(path).Get();
 	}
 
-	void DrawImage(std::wstring path, XMFLOAT2 pos, XMFLOAT2 size) override;
-	void DrawRect(XMFLOAT2 pos, XMFLOAT2 size) override;
-	void DrawStr(XMFLOAT2 pos, std::string text) override;
+	void DrawImage(const std::wstring path, const XMFLOAT2 pos, const XMFLOAT2 size) override;
+	void DrawRect(const XMFLOAT2 pos, const XMFLOAT2 size) override;
+	void DrawStr(const XMFLOAT2 pos, const std::string text) override;
 	void ClearDepth() override;
 	XMFLOAT2 GetMousePos() override;
 } *X = nullptr;
