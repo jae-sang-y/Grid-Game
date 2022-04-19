@@ -430,6 +430,7 @@
     <ClInclude Include="GameData\Nation.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="main_program.hpp" />
     <CLInclude Include="resource.h" />
     <ResourceCompile Include="HLSLWithoutFX.rc" />
   </ItemGroup>

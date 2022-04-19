@@ -40,12 +40,14 @@ public:
 	int enemy_army_size = 0;
 	int nation_size = 0;
 	bool notFall = true;
-	bool on_war = false;
+	bool revolt_war = false;
 	int peace_time = 0;
+	bool on_war = false;
 
 	struct Relation {
 		bool is_neigbor = false;
 		bool is_war = false;
+		bool is_revolt_war = false;
 		Nation* const target;
 		Nation* const owner;
 
@@ -88,7 +90,9 @@ public:
 			return nullptr;
 		}
 	}
-
+public:
+	static void DeclareWar(Nation* actor, Nation* target);
+	static void StartRelation(Nation* actor, Nation* target);
 };
 
 

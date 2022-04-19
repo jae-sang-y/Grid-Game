@@ -1,6 +1,15 @@
 #include "DXUT.h"
 
-void DeclareWar(Nation* actor, Nation* target) {
+void Nation::StartRelation(Nation* actor, Nation* opponent) {
+
+	if (actor->relats.find(opponent) == actor->relats.end())
+		actor->relats[opponent] = new Nation::Relation(actor, opponent);
+
+	if (opponent->relats.find(actor) == opponent->relats.end())
+		opponent->relats[actor] = new Nation::Relation(opponent, actor);
+}
+
+void Nation::DeclareWar(Nation* actor, Nation* target) {
 	actor->relats.at(target)->is_war = true;
 	target->relats.at(actor)->is_war = true;
 	actor->relats.at(target)->time_from_last_enemy_action = -100;
@@ -40,11 +49,11 @@ void Nation::OnBlockPropaganda(Block* blockA, Block* blockB) {
 	if (blockA->geo_desc->passable && blockB->geo_desc->passable) {
 		auto& Sa = strategy_map[blockA->X][blockA->Y];
 		auto& Sb = strategy_map[blockB->X][blockB->Y];
-		double bias = 0;
-		if (blockB->army != nullptr and blockB->army->is_belongs(this))
-			bias = Sa.prop.power / 2;
-		bias += 0.01 * (Sa.prop.power * (1 - (blockA->road_level.data() / (double)ROAD_LEVEL_MAX)));
-		bias += 0.01 * (Sa.prop.power * blockA->geo_desc->mho);
+		double bias = 0.01;
+		//if (blockA->army != nullptr and blockA->army->is_belongs(this))
+		//	bias = Sa.prop.power / 2;
+		//bias += 0.01 * (Sa.prop.power * (1 - (blockA->road_level.data() / (double)ROAD_LEVEL_MAX)));
+		//bias += 0.01 * (Sa.prop.power * blockA->geo_desc->mho);
 		if (Sb.passable) Sa.prop << (Sb.prop - bias);
 	}
 }
@@ -61,7 +70,7 @@ void Nation::ClearStat() {
 				if (relat.second->is_war)
 				{
 					if (this->army_size < this->enemy_army_size and
-						opponent->army_size < opponent->enemy_army_size) {
+						opponent->army_size < opponent->enemy_army_size and not relat.second->is_revolt_war) {
 						EndWar(this, opponent);
 					}
 					threshold += relat.first->army_size;
@@ -325,11 +334,11 @@ void Nation::SpoilBlock(Block* target) {
 	destination->man_level += ruin_man_amount;
 	target->man_level -= ruin_man_amount;
 
-	if (target->farm_level > 1)
-		target->farm_level = 1;
-	if(target->building_level > 1)
-		target->building_level = 1;
-	target->manpower = 0;
+	//if (target->farm_level > 1)
+	//	target->farm_level = 1;
+	//if(target->building_level > 1)
+	//	target->building_level = 1;
+	//target->manpower = 0;
 }
 
 

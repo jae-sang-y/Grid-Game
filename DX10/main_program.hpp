@@ -26,29 +26,77 @@ public:
 		return x >= 0 && x < MAP_W&& y >= 0 && y < MAP_H;
 	}
 
+	void SplitNationByRevolution(Nation* new_nation, Nation* old_nation)
+	{
+		new_nation->nation_size = 0;
+		for (auto block : AllBlocks())
+		{
+			if (rand() % 2 == 1)
+			{
+				if (block->owner == old_nation && old_nation->capital != block)
+				{
+					block->owner = new_nation;
+					if (block->army != nullptr)
+					{
+						block->army->set_belong(new_nation);
+					}
+					new_nation->nation_size += 1;
+				}
+			}
+		}
+
+		if (new_nation->nation_size > 0)
+		{
+			new_nation->notFall = true;
+			new_nation->LostCapital();
+			Nation::StartRelation(new_nation, old_nation);
+			Nation::DeclareWar(new_nation, old_nation);
+			new_nation->get_relation_with(old_nation)->is_revolt_war = true;
+			old_nation->get_relation_with(new_nation)->is_revolt_war = true;
+		}
+	}
+
 	void RebornNation() {
 		for (auto& nation : this->nations) {
 			if (!nation->notFall) {
-				Block* to_born_block = nullptr;
-				int max_man_level = 0;
-				for (auto block : AllBlocks())
+				if (rand() % 10000 == 0)
 				{
-					if (block->owner == nullptr and block->army == nullptr and block->geo_desc->livable)
-					{
-						if (block->man_level.data() > max_man_level)
-						{
-							max_man_level = block->man_level.data();
-							to_born_block = block;
+					Nation* biggest_nation = nullptr;
+					int biggest_size = 0;
+					for (auto& old_nation : this->nations) {
+						if (not old_nation->notFall) continue;
+						if (old_nation->army_size > biggest_size && rand() % 5 == 0) {
+							biggest_size = old_nation->army_size;
+							biggest_nation = old_nation;
 						}
 					}
+					if (biggest_nation != nullptr) {
+						SplitNationByRevolution(nation, biggest_nation);
+					}
 				}
-
-				if (to_born_block != nullptr)
+				else 
 				{
-					to_born_block->owner = nation;
-					nation->capital.set(to_born_block);
-					nation->nation_size = 1;
-					nation->notFall = true;
+					Block* to_born_block = nullptr;
+					int max_man_level = 0;
+					for (auto block : AllBlocks())
+					{
+						if (block->owner == nullptr and block->army == nullptr and block->geo_desc->livable)
+						{
+							if (block->man_level.data() > max_man_level)
+							{
+								max_man_level = block->man_level.data();
+								to_born_block = block;
+							}
+						}
+					}
+
+					if (to_born_block != nullptr)
+					{
+						to_born_block->owner = nation;
+						nation->capital.set(to_born_block);
+						nation->nation_size = 1;
+						nation->notFall = true;
+					}
 				}
 
 			}
@@ -201,6 +249,7 @@ public:
 				for (int x = 0; x < MAP_W; ++x)
 					all_blocks.push_back(&board[x][y]);
 		}
+		//std::shuffle(all_blocks.begin(), all_blocks.end(), rand);
 		return all_blocks;
 	}
 
@@ -261,7 +310,7 @@ public:
 	}
 
 	void StageUpdateInfo() {
-		//RebornNation();
+		RebornNation();
 		for (auto& block : AllBlocks()) if (block->geo_desc->passable) block->OnUpdateInfo();
 		for (auto& nation : nations) nation->ClearStat();
 	}

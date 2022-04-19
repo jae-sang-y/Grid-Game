@@ -79,6 +79,7 @@
     <ClInclude Include="GameData\GameData.hpp">
       <Filter>GameData</Filter>
     </ClInclude>
+    <ClInclude Include="main_program.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXVIew.cpp" />

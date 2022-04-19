@@ -10,7 +10,7 @@ void Block::OnUpdateInfo() {
 	man_info -= geo_desc->mho;
 	//if (owner != nullptr)
 	{
-		farm_info << BlockPropaganda(ID, farm_level.data(), pow(50 * farm_level.data() * farm_proportion, 2));
+		farm_info << BlockPropaganda(ID, farm_level.data(), pow(farm_level.data() * farm_proportion, 2));
 		build_info << BlockPropaganda(ID, building_level.data(), pow(building_level.data() * building_proportion, 2));
 
 		man_info << BlockPropaganda(ID, man_level.data(), pow(man_level.data() * man_proportion, 2));
@@ -25,23 +25,23 @@ void Block::OnPropaganda(Block* other) {
 	double moving_limit = (this->GetThroughOut() + other->GetThroughOut()) / 2.0;
 	int manpower_moving_limit = road_level.data();
 	
-	if (this->man_level > 1000)
-	{
-		if (this->owner != nullptr and other->owner == nullptr and other->army == nullptr and other->geo_desc->livable)
-		{
-			int moving_amount = this->man_level.data();
-			moving_amount = std::min({
-				moving_amount,
-				manpower_moving_limit,
-				MAN_LEVEL_MAX - other->man_level.data(),
-				MAN_LEVEL_PER_BUILD_LEVEL * (1 + other->building_level.data()) - other->man_level.data()
-				});
-
-			other->man_level += moving_amount;
-			this->man_level -= moving_amount;
-			this->owner->TakeBlock(other);
-		}
-	}
+	// if (this->man_level > 1000)
+	// {
+	// 	if (this->owner != nullptr and other->owner == nullptr and other->army == nullptr and other->geo_desc->livable)
+	// 	{
+	// 		int moving_amount = this->man_level.data();
+	// 		moving_amount = std::min({
+	// 			moving_amount,
+	// 			manpower_moving_limit,
+	// 			MAN_LEVEL_MAX - other->man_level.data(),
+	// 			MAN_LEVEL_PER_BUILD_LEVEL * (1 + other->building_level.data()) - other->man_level.data()
+	// 			});
+	// 
+	// 		other->man_level += moving_amount;
+	// 		this->man_level -= moving_amount;
+	// 		this->owner->TakeBlock(other);
+	// 	}
+	// }
 
 	if (this->farm_info > other->farm_info) {
 		other->farm_info << this->farm_info;
@@ -56,7 +56,7 @@ void Block::OnPropaganda(Block* other) {
 		{
 			other->man_level -= moving_amount;
 			this->man_level += moving_amount;
-			road_growth += std::min({ 0.01 * moving_amount / (1 + road_level.data()), 1 - road_growth.data() });
+			road_growth += std::min({ ROAD_LEVEL_GROWTH * moving_amount / (1 + road_level.data()), 1 - road_growth.data() });
 		}
 	}
 	if (this->build_info > other->build_info) {
@@ -72,7 +72,7 @@ void Block::OnPropaganda(Block* other) {
 		{
 			other->man_level -= moving_amount;
 			this->man_level += moving_amount;
-			road_growth += std::min({ 0.01 * moving_amount / (1 + road_level.data()), 1 - road_growth.data() });
+			road_growth += std::min({ ROAD_LEVEL_GROWTH * moving_amount / (1 + road_level.data()), 1 - road_growth.data() });
 		}
 	}
 	if (this->man_info > other->man_info) {
@@ -86,7 +86,7 @@ void Block::OnPropaganda(Block* other) {
 				});
 			other->food -= moving_amount;
 			this->food += moving_amount;
-			road_growth += std::min({ 0.03 * moving_amount / (1 + road_level.data()), 1 - road_growth.data() });
+			road_growth += std::min({ ROAD_LEVEL_GROWTH * 3 * moving_amount / (1 + road_level.data()), 1 - road_growth.data() });
 		}
 		{
 			double moving_amount = other->product.data();
@@ -97,7 +97,7 @@ void Block::OnPropaganda(Block* other) {
 				});
 			other->product -= moving_amount;
 			this->product += moving_amount;
-			road_growth += std::min({ 0.03 * moving_amount / (1 + road_level.data()), 1 - road_growth.data() });
+			road_growth += std::min({ ROAD_LEVEL_GROWTH * 3 * moving_amount / (1 + road_level.data()), 1 - road_growth.data() });
 		}
 	}
 
@@ -119,7 +119,7 @@ void Block::OnStep() {
 	if (this->owner != nullptr)
 	{
 		if ((this->owner->army_size < sqrt(this->owner->nation_size) * 4 or this->owner->on_war) and this->army == nullptr) {
-			if (this->man_level > ARMY_MAN_COST && this->food > ARMY_FOOD_COST)
+			if (this->man_level > ARMY_MAN_COST *2 && this->food > ARMY_FOOD_COST * 2)
 				this->owner->DraftArmy(this);
 		}
 	}
@@ -140,38 +140,53 @@ void Block::OnStep() {
 		if (build_growth_proprotion >= 1)
 			product -= build_growth_proprotion - 1;
 
-		double man_level_proportion = std::min({ food.data() });
-		multiply_by_demand = man_level_proportion / (man_level.data() * MAN_CONSUME_PER_MAN);
-		if (multiply_by_demand > 1.5) {
-			food -= man_level.data() * MAN_CONSUME_PER_MAN * 1.5;
+		double food_supply = food.data();
+		double food_demand = man_level.data() * MAN_CONSUME_PER_MAN;
+		multiply_by_demand = food_supply / food_demand;
+		if (multiply_by_demand > 2) {
+			food -= food_demand;
 
-			int fit_movement = ceil((multiply_by_demand - 0.5) * MAN_BORN_RATE * man_level.data());
-			fit_movement = std::min({ 
-				fit_movement, 
-				MAN_LEVEL_PER_BUILD_LEVEL * (1 + building_level.data()) - man_level.data()
+			double man_increment = std::min({ 
+				food.data() / MAN_CONSUME_PER_MAN,
+				ceil(man_level.data() * MAN_BORN_RATE),
+				MAN_LEVEL_PER_BUILD_LEVEL * (1.0 + building_level.data()) - man_level.data(),
+				MAN_LEVEL_MAX - (double)man_level.data()
 				});
-			if (fit_movement > 0)
-				if (man_level.data() + fit_movement >= MAN_LEVEL_MAX) man_level = MAN_LEVEL_MAX;
-				else
-					man_level += fit_movement;
+			
+			if (man_increment > 0)
+			{
+				man_level += round(man_increment);
+				food -= man_increment * MAN_CONSUME_PER_MAN;
+			}
 		}
 		else if (multiply_by_demand >= 1) {
-			food -= man_level.data() * MAN_CONSUME_PER_MAN;
+			food -= food_demand;
 		}
 		else
 		{
-			if (food.data() > man_level_proportion * MAN_CONSUME_PER_MAN)
-				food -= man_level_proportion * MAN_CONSUME_PER_MAN;
-			else food = 0;
-
-			//int fit_movement = round((1 - multiply_by_demand) / 2 * man_level.data());
-			//if (fit_movement > man_level.data())
-			//	man_level = 0;
-			//else
-			//	man_level -= fit_movement;
+			if (food.data() > food_demand)
+				food -= food_demand;
+			else {
+				food_demand -= food.data();
+				food = 0;
+				double man_decrement = std::min({
+					(double)man_level.data(),
+					floor(food_demand / MAN_CONSUME_PER_MAN)
+				});
+				man_level -= man_decrement;
+			}
 		}
 		manpower = (double)man_level.data();
 
+		{
+			double product_amount = std::min(
+				{
+					1.2 * pow(building_level.data() / (double) BUILDING_LEVEL_MAX, 2)
+					 * pow(man_level.data() / (double)MAN_LEVEL_MAX, 2),
+					GetAvailableSpace()
+				});
+			product += product_amount;
+		}
 		if (build_growth > 0) {
 			if (build_growth >= 0.9 && building_level.data() + 1 <= BUILDING_LEVEL_MAX) {
 				if (double building_upgrade_cost = pow((double)building_level.data() + 1, 2); product > building_upgrade_cost && manpower.data() > building_upgrade_cost) {
@@ -181,16 +196,23 @@ void Block::OnStep() {
 					build_growth = 0;
 				}
 			}
-			else
-			{
-				double product_amount = std::min({ build_growth.data() * 0.5 , (double)building_level.data(), GetAvailableSpace() });
-				product += product_amount;
-				build_growth -= product_amount;
-			}
+			// else
+			// {
+			// 	double product_amount = std::min({ build_growth.data() * 0.5 , 1 + (double)building_level.data(), GetAvailableSpace() });
+			// 	product += product_amount;
+			// 	build_growth -= product_amount;
+			// }
 		}
 
 		{
-			double food_amount = std::min({ 0.2 * (geo_desc->farm_level + farm_level.data()), GetAvailableSpace()});
+			double food_amount = std::min({ 
+				FOOD_PER_FARM_RATE 
+				* geo_desc->farm_level
+				* (1 + pow(farm_level.data() / (double)FARM_LEVEL_MAX, 2))
+				* (1 + pow(man_level.data() / (double)MAN_LEVEL_MAX, 2))
+				,
+				GetAvailableSpace()
+				});
 			food += food_amount;
 		}
 		if (farm_growth > 0) {
@@ -213,10 +235,10 @@ void Block::OnStep() {
 	else multiply_by_demand = FLT_MAX;
 
 	if (geo_desc->passable) {
-		double road_growth_decay = 0.00001 * road_level.data();
+		double road_growth_decay = ROAD_LEVEL_GROWTH * 0.1 * road_level.data();
 		if (road_growth < road_growth_decay) {
 			road_growth = 0;
-			if (road_level > 0) road_level -= 1;
+			//if (road_level > 0) road_level -= 1;
 		}
 		else if (road_growth >= 1) {
 			road_growth = 0;
@@ -233,7 +255,7 @@ void Block::OnStep() {
 			owner = nullptr;
 			former_owner->LostCapital();
 		}
-		owner = nullptr;
+		// owner = nullptr;
 	}
 
 	if (army != nullptr) {

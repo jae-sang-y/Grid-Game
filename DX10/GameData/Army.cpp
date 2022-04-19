@@ -48,12 +48,12 @@ void Army::Step() {
 	if (this->ground != nullptr && energy < 1500)
 	{
 		int food_amount = std::min({
-			140.0,
-			this->ground->food.data() / ARMY_FOOD_CONSUME,
-			1500.0 - energy - 1
+			140.0 * ARMY_FOOD_CONSUME,
+			this->ground->food.data(),
+			(1500.0 - energy - 1) * ARMY_FOOD_CONSUME
 			});
-		this->ground->food -= food_amount * ARMY_FOOD_CONSUME;
-		energy += food_amount + 5;
+		this->ground->food -= food_amount;
+		energy += ceil(food_amount / ARMY_FOOD_CONSUME) + 5;
 	}
 }
 

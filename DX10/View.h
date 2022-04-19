@@ -4,8 +4,8 @@
 using namespace DirectX;
 
 
-constexpr int virtual_W = 28 * 80;
-constexpr int virtual_H = 28 * 60;
+constexpr int virtual_W = 20 * 80;
+constexpr int virtual_H = 20 * 60;
 
 class View {
 public:

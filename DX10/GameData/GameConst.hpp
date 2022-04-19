@@ -23,14 +23,16 @@ constexpr static double MAN_BORN_RATE = 0.0001;
 
 constexpr static int ROAD_LEVEL_MIN = 1;
 constexpr static int ROAD_LEVEL_MAX = 63;
+constexpr static double ROAD_LEVEL_GROWTH = 0.1;
 
-constexpr static int ARMY_MAN_COST = 1000;
-constexpr static int ARMY_FOOD_COST = 100;
-constexpr static int ARMY_FOOD_CONSUME = 100;
+constexpr static int ARMY_MAN_COST = 50;
+constexpr static double ARMY_FOOD_COST = 0.3;
+constexpr static double ARMY_FOOD_CONSUME = 0.1;
 constexpr static double SPOIL_PROPORTION = 0.5;
 
 constexpr static int MAX_NATION_COUNT = 100;
-constexpr static double MAN_CONSUME_PER_MAN = 1 / 18.0;
+constexpr static double MAN_CONSUME_PER_MAN = 0.1;
+constexpr static double FOOD_PER_FARM_RATE = 0.1;
 
 const static XMVECTOR MAP_LENS_FARM_MIN = XMVectorSet(203, 234, 229, 0);
 const static XMVECTOR MAP_LENS_FARM_MAX = XMVectorSet(0, 69, 28, 0);
